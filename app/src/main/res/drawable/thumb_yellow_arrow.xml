@@ -1,0 +1,12 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="#FFEB3B"/> <size android:width="50dp" android:height="50dp"/>
+        </shape>
+    </item>
+    <item android:drawable="@android:drawable/ic_media_play"
+        android:width="24dp"
+        android:height="24dp"
+        android:gravity="center"
+        android:tint="#000000"/>
+</layer-list>

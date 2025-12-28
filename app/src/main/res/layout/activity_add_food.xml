@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF">
+
+    <ImageView
+        android:id="@+id/btnBackAdd"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:src="@drawable/ic_back_arrow"
+        app:tint="#000000"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <TextView
+        android:id="@+id/tvAddTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Sell Food"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="#000000"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/btnBackAdd"
+        app:layout_constraintBottom_toBottomOf="@id/btnBackAdd"/>
+
+    <ImageView
+        android:id="@+id/btnCloseAdd"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginEnd="16dp"
+        android:src="@android:drawable/ic_menu_close_clear_cancel"
+        app:tint="#000000"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/btnBackAdd"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        android:paddingBottom="80dp"
+        android:clipToPadding="false"
+        app:layout_constraintTop_toBottomOf="@id/btnBackAdd"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="20dp">
+
+            <LinearLayout
+                android:id="@+id/uploadContainer"
+                android:layout_width="match_parent"
+                android:layout_height="180dp"
+                android:background="@drawable/bg_dashed_border"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:clickable="true"
+                android:focusable="true">
+
+                <LinearLayout
+                    android:id="@+id/placeholderState"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@android:drawable/ic_menu_gallery"
+                        app:tint="#9E9E9E"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Tap to add photos"
+                        android:textStyle="bold"
+                        android:textColor="#616161"
+                        android:layout_marginTop="8dp"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Upload images of your food"
+                        android:textSize="12sp"
+                        android:textColor="#9E9E9E"/>
+                </LinearLayout>
+
+                <ImageView
+                    android:id="@+id/ivSelectedImage"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:visibility="gone" />
+            </LinearLayout>
+
+            <TextView android:text="Title *" android:layout_marginTop="20dp" style="@style/LabelStyle"/>
+            <EditText android:hint="e.g., Fresh homemade lasagna" style="@style/InputStyle"/>
+
+            <TextView android:text="Description *" android:layout_marginTop="16dp" style="@style/LabelStyle"/>
+            <EditText
+                android:hint="Describe the food, ingredients, allergens..."
+                style="@style/InputStyle"
+                android:gravity="top"
+                android:minLines="3"/>
+
+            <TextView android:text="Price *" android:layout_marginTop="16dp" style="@style/LabelStyle"/>
+            <EditText android:id="@+id/etPrice" android:hint="$ 0.00" android:inputType="numberDecimal" style="@style/InputStyle"/>
+
+            <TextView android:text="Quantity *" android:layout_marginTop="16dp" style="@style/LabelStyle"/>
+            <EditText android:hint="# e.g., 4 servings" style="@style/InputStyle"/>
+
+            <TextView android:text="Pickup Time *" android:layout_marginTop="16dp" style="@style/LabelStyle"/>
+            <EditText android:hint="Clock icon: Today 6-8pm" style="@style/InputStyle"/>
+
+            <Button
+                android:id="@+id/btnList"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:text="List for Sale"
+                android:textColor="#000000"
+                android:textStyle="bold"
+                android:backgroundTint="#FFEB3B"
+                app:cornerRadius="12dp"
+                android:layout_marginTop="32dp"/>
+
+        </LinearLayout>
+    </ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>
