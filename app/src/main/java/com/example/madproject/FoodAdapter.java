@@ -33,8 +33,12 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.FoodViewHolder
 
         holder.title.setText(item.getTitle());
         holder.price.setText(item.getPrice());
-        holder.pic.setImageResource(item.getPicUrl()); // Or getPicId() depending on your class
-
+        com.bumptech.glide.Glide.with(holder.itemView.getContext())
+                .load(item.getImageUrl()) // Ensure your FoodItem class has getImageUrl()
+                .placeholder(R.drawable.ic_launcher_background) // Shown while loading
+                .error(android.R.drawable.stat_notify_error)      // Shown if URL fails
+                .centerCrop()
+                .into(holder.pic);
         // 3. SET CLICK LISTENER
         holder.itemView.setOnClickListener(v -> {
             listener.onItemClick(item);

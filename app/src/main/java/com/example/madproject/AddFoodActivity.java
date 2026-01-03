@@ -10,31 +10,38 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
 public class AddFoodActivity extends AppCompatActivity {
 
-    // Variables for the Image Picker Views
     private LinearLayout uploadContainer;
-    private View placeholderState; // The icon and text
-    private ImageView ivSelectedImage; // The final image
+    private View placeholderState;
+    private ImageView ivSelectedImage;
+    private EditText etTitle, etDescription, etPrice, etQuantity, etPickup;
+    private String mode;
+    private Uri imageUri; // Variable to store the picked image URI
 
-    // 1. DEFINE THE IMAGE LAUNCHER
-    // This handles the result when the user picks a photo from the gallery
+    // Image Picker Launcher
     private final ActivityResultLauncher<String> pickImageLauncher = registerForActivityResult(
             new ActivityResultContracts.GetContent(),
-            new ActivityResultCallback<Uri>() {
-                @Override
-                public void onActivityResult(Uri result) {
-                    if (result != null) {
-                        // Image picked successfully!
-                        placeholderState.setVisibility(View.GONE);  // Hide the "Tap to add" text
-                        ivSelectedImage.setVisibility(View.VISIBLE); // Show the image view
-                        ivSelectedImage.setImageURI(result);        // Display the image
-                    }
+            result -> {
+                if (result != null) {
+                    imageUri = result;
+                    placeholderState.setVisibility(View.GONE);
+                    ivSelectedImage.setVisibility(View.VISIBLE);
+                    ivSelectedImage.setImageURI(result);
                 }
             }
     );
@@ -44,60 +51,101 @@ public class AddFoodActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_food);
 
-        // 2. INITIALIZE ALL VIEWS
-        TextView tvTitle = findViewById(R.id.tvAddTitle);
-        EditText etPrice = findViewById(R.id.etPrice);
-        Button btnList = findViewById(R.id.btnList);
-        ImageView btnBack = findViewById(R.id.btnBackAdd);
-        ImageView btnClose = findViewById(R.id.btnCloseAdd);
+        // 1. Initialize Views
+        initViews();
 
-        // Views for image picking
+        // 2. Setup Mode (Sell vs Free)
+        mode = getIntent().getStringExtra("MODE");
+        setupModeUI();
+
+        // 3. Image Picker Click
+        uploadContainer.setOnClickListener(v -> pickImageLauncher.launch("image/*"));
+
+        // 4. Back/Close Actions
+        findViewById(R.id.btnBackAdd).setOnClickListener(v -> finish());
+        findViewById(R.id.btnCloseAdd).setOnClickListener(v -> finish());
+
+        // 5. List Button Click
+        findViewById(R.id.btnList).setOnClickListener(v -> validateAndUpload());
+    }
+
+    private void initViews() {
         uploadContainer = findViewById(R.id.uploadContainer);
         placeholderState = findViewById(R.id.placeholderState);
         ivSelectedImage = findViewById(R.id.ivSelectedImage);
+        etTitle = findViewById(R.id.etTitle);
+        etDescription = findViewById(R.id.etDescription);
+        etPrice = findViewById(R.id.etPrice);
+        etQuantity = findViewById(R.id.etQuantity);
+        etPickup = findViewById(R.id.etPickup);
+    }
 
-        // 3. CHECK INTENT MODE (Sell vs Free)
-        String mode = getIntent().getStringExtra("MODE");
+    private void setupModeUI() {
+        TextView tvTitle = findViewById(R.id.tvAddTitle);
+        Button btnList = findViewById(R.id.btnList);
 
-        if (mode != null && mode.equals("FREE")) {
+        if ("FREE".equals(mode)) {
             tvTitle.setText("List Free Food");
             btnList.setText("List for Free");
-
-            // Hide the Price input since it's free
-            if (etPrice != null) {
-                etPrice.setText("0.00");
-                etPrice.setEnabled(false);
-                etPrice.setVisibility(View.GONE); // Hide the price field completely
-            }
+            etPrice.setText("0.00");
+            etPrice.setEnabled(false);
+            etPrice.setVisibility(View.GONE);
         } else {
             tvTitle.setText("Sell Food");
             btnList.setText("List for Sale");
         }
+    }
 
-        // 4. HANDLE BACK & CLOSE BUTTONS
-        View.OnClickListener closeAction = v -> finish();
-        btnBack.setOnClickListener(closeAction);
-        btnClose.setOnClickListener(closeAction);
+    private void validateAndUpload() {
+        String title = etTitle.getText().toString().trim();
+        String desc = etDescription.getText().toString().trim();
+        String price = etPrice.getText().toString().trim();
 
-        // 5. HANDLE IMAGE PICKER CLICK
-        uploadContainer.setOnClickListener(v -> {
-            // Launch the gallery filtering for images only
-            pickImageLauncher.launch("image/*");
+        if (title.isEmpty() || desc.isEmpty() || imageUri == null) {
+            Toast.makeText(this, "Please add a photo, title, and description", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        uploadImageToStorage(title, desc, price);
+    }
+
+    private void uploadImageToStorage(String title, String desc, String price) {
+        // Show a toast or progress bar here
+        Toast.makeText(this, "Uploading...", Toast.LENGTH_SHORT).show();
+
+        // Create a unique filename for the image
+        String fileName = UUID.randomUUID().toString() + ".jpg";
+        StorageReference storageRef = FirebaseStorage.getInstance().getReference().child("food_images/" + fileName);
+
+        storageRef.putFile(imageUri).addOnSuccessListener(taskSnapshot -> {
+            // Image uploaded! Now get the download URL
+            storageRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                saveFoodToFirestore(title, desc, price, uri.toString());
+            });
+        }).addOnFailureListener(e -> {
+            Toast.makeText(this, "Image Upload Failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         });
+    }
 
-        // 6. HANDLE "LIST" BUTTON CLICK
-        btnList.setOnClickListener(v -> {
-            // Simple validation before finishing
-            if (etPrice.isEnabled() && etPrice.getText().toString().isEmpty()) {
-                Toast.makeText(this, "Please enter a price", Toast.LENGTH_SHORT).show();
-                return;
-            }
+    private void saveFoodToFirestore(String title, String desc, String price, String imageUrl) {
+        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-            // Here you would normally save data to a database
-            Toast.makeText(this, "Food Listed Successfully!", Toast.LENGTH_SHORT).show();
+        Map<String, Object> food = new HashMap<>();
+        food.put("title", title);
+        food.put("description", desc);
+        food.put("price", "FREE".equals(mode) ? "Free" : "$" + price);
+        food.put("imageUrl", imageUrl); // Link to the uploaded image
+        food.put("ownerId", uid);
+        food.put("status", "active");
+        food.put("timestamp", FieldValue.serverTimestamp());
 
-            // Close this page and go back
-            finish();
-        });
+        FirebaseFirestore.getInstance().collection("foods").add(food)
+                .addOnSuccessListener(documentReference -> {
+                    Toast.makeText(this, "Food Listed Successfully!", Toast.LENGTH_SHORT).show();
+                    finish();
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this, "Firestore Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
     }
 }

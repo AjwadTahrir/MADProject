@@ -103,23 +103,32 @@
             </LinearLayout>
 
             <TextView android:text="Title *" android:layout_marginTop="20dp" style="@style/LabelStyle"/>
-            <EditText android:hint="e.g., Fresh homemade lasagna" style="@style/InputStyle"/>
+            <EditText android:id="@+id/etTitle"
+                android:hint="e.g., Fresh homemade lasagna"
+                style="@style/InputStyle"/>
 
             <TextView android:text="Description *" android:layout_marginTop="16dp" style="@style/LabelStyle"/>
             <EditText
+                android:id="@+id/etDescription"
                 android:hint="Describe the food, ingredients, allergens..."
                 style="@style/InputStyle"
                 android:gravity="top"
                 android:minLines="3"/>
 
             <TextView android:text="Price *" android:layout_marginTop="16dp" style="@style/LabelStyle"/>
-            <EditText android:id="@+id/etPrice" android:hint="$ 0.00" android:inputType="numberDecimal" style="@style/InputStyle"/>
+            <EditText android:id="@+id/etPrice"
+                android:hint="$ 0.00"
+                android:inputType="numberDecimal"
+                style="@style/InputStyle"/>
 
             <TextView android:text="Quantity *" android:layout_marginTop="16dp" style="@style/LabelStyle"/>
-            <EditText android:hint="# e.g., 4 servings" style="@style/InputStyle"/>
-
+            <EditText android:id="@+id/etQuantity"
+                android:hint="# e.g., 4 servings"
+                style="@style/InputStyle"/>
             <TextView android:text="Pickup Time *" android:layout_marginTop="16dp" style="@style/LabelStyle"/>
-            <EditText android:hint="Clock icon: Today 6-8pm" style="@style/InputStyle"/>
+            <EditText android:id="@+id/etPickup"
+                android:hint="Today 6-8pm"
+                style="@style/InputStyle"/>
 
             <Button
                 android:id="@+id/btnList"
