@@ -50,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
             intent.putExtra("FOOD_TITLE", item.getTitle());
             intent.putExtra("FOOD_PRICE", item.getPrice());
             intent.putExtra("FOOD_IMAGE_URL", item.getImageUrl()); // Use the web URL
+            intent.putExtra("OWNER_NAME", item.getOwnerName());
             startActivity(intent);
         });
         recyclerFoods.setAdapter(adapter);

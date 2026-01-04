@@ -129,13 +129,14 @@ public class AddFoodActivity extends AppCompatActivity {
 
     private void saveFoodToFirestore(String title, String desc, String price, String imageUrl) {
         String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-
+        String uName = FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
         Map<String, Object> food = new HashMap<>();
         food.put("title", title);
         food.put("description", desc);
         food.put("price", "FREE".equals(mode) ? "Free" : "$" + price);
         food.put("imageUrl", imageUrl); // Link to the uploaded image
         food.put("ownerId", uid);
+        food.put("ownerName", uName != null ? uName : "Anonymous Seller");
         food.put("status", "active");
         food.put("timestamp", FieldValue.serverTimestamp());
 
@@ -148,4 +149,5 @@ public class AddFoodActivity extends AppCompatActivity {
                     Toast.makeText(this, "Firestore Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
     }
+
 }

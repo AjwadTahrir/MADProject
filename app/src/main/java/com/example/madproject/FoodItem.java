@@ -6,10 +6,12 @@ public class FoodItem {
     private double rating;
     private int picUrl;     // Local resource ID
     private String imageUrl; // Firebase Storage URL
+    private String ownerName;
 
     // Required empty constructor for Firestore
     public FoodItem() {}
-
+    public String getOwnerName() {
+        return ownerName; } // Allows the app to read the name from Firestore
     // Updated Constructor
     public FoodItem(String title, String price, double rating, int picUrl,String imageURL) {
         this.title = title;
