@@ -1,53 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FFFFFF">
 
-    <ImageView
-        android:id="@+id/btnBackAdd"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:src="@drawable/ic_back_arrow"
-        app:tint="#000000"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
-
-    <TextView
-        android:id="@+id/tvAddTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Sell Food"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:textColor="#000000"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/btnBackAdd"
-        app:layout_constraintBottom_toBottomOf="@id/btnBackAdd"/>
-
-    <ImageView
-        android:id="@+id/btnCloseAdd"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_marginEnd="16dp"
-        android:src="@android:drawable/ic_menu_close_clear_cancel"
-        app:tint="#000000"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/btnBackAdd"/>
-
-    <ScrollView
+    <RelativeLayout
+        android:id="@+id/headerLayout"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginTop="16dp"
-        android:paddingBottom="80dp"
-        android:clipToPadding="false"
-        app:layout_constraintTop_toBottomOf="@id/btnBackAdd"
-        app:layout_constraintBottom_toBottomOf="parent">
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:padding="16dp">
+
+        <ImageView
+            android:id="@+id/btnBackAdd"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/ic_back_arrow"
+            app:tint="#000000" />
+
+        <TextView
+            android:id="@+id/tvAddTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="Sell Food"
+            android:textColor="#000000"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/btnCloseAdd"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:src="@android:drawable/ic_menu_close_clear_cancel"
+            app:tint="#000000" />
+    </RelativeLayout>
+
+    <Button
+        android:id="@+id/btnList"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="16dp"
+        android:backgroundTint="#FFEB3B"
+        android:text="List for Sale"
+        android:textColor="#000000"
+        android:textStyle="bold"
+        app:cornerRadius="12dp" />
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/nestedScrollView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/btnList"
+        android:layout_below="@+id/headerLayout">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -55,43 +67,45 @@
             android:orientation="vertical"
             android:padding="20dp">
 
+            <!-- All form fields go here -->
+
             <LinearLayout
                 android:id="@+id/uploadContainer"
                 android:layout_width="match_parent"
                 android:layout_height="180dp"
                 android:background="@drawable/bg_dashed_border"
-                android:orientation="vertical"
-                android:gravity="center"
                 android:clickable="true"
-                android:focusable="true">
+                android:focusable="true"
+                android:gravity="center"
+                android:orientation="vertical">
 
                 <LinearLayout
                     android:id="@+id/placeholderState"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:gravity="center">
+                    android:gravity="center"
+                    android:orientation="vertical">
 
                     <ImageView
                         android:layout_width="40dp"
                         android:layout_height="40dp"
                         android:src="@android:drawable/ic_menu_gallery"
-                        app:tint="#9E9E9E"/>
+                        app:tint="#9E9E9E" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
                         android:text="Tap to add photos"
-                        android:textStyle="bold"
                         android:textColor="#616161"
-                        android:layout_marginTop="8dp"/>
+                        android:textStyle="bold" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Upload images of your food"
-                        android:textSize="12sp"
-                        android:textColor="#9E9E9E"/>
+                        android:textColor="#9E9E9E"
+                        android:textSize="12sp" />
                 </LinearLayout>
 
                 <ImageView
@@ -102,36 +116,117 @@
                     android:visibility="gone" />
             </LinearLayout>
 
-            <TextView android:text="Title *" android:layout_marginTop="20dp" style="@style/LabelStyle"/>
-            <EditText android:hint="e.g., Fresh homemade lasagna" style="@style/InputStyle"/>
+            <TextView
+                style="@style/LabelStyle"
+                android:layout_marginTop="20dp"
+                android:text="Title *" />
 
-            <TextView android:text="Description *" android:layout_marginTop="16dp" style="@style/LabelStyle"/>
             <EditText
-                android:hint="Describe the food, ingredients, allergens..."
+                android:id="@+id/etTitle"
+                style="@style/InputStyle"
+                android:hint="e.g., Fresh homemade lasagna" />
+
+            <TextView
+                style="@style/LabelStyle"
+                android:layout_marginTop="16dp"
+                android:text="Description *" />
+
+            <EditText
+                android:id="@+id/etDescription"
                 style="@style/InputStyle"
                 android:gravity="top"
-                android:minLines="3"/>
+                android:hint="Describe the food, ingredients, allergens..."
+                android:minLines="3" />
 
-            <TextView android:text="Price *" android:layout_marginTop="16dp" style="@style/LabelStyle"/>
-            <EditText android:id="@+id/etPrice" android:hint="$ 0.00" android:inputType="numberDecimal" style="@style/InputStyle"/>
+            <TextView
+                style="@style/LabelStyle"
+                android:layout_marginTop="16dp"
+                android:text="Price *" />
 
-            <TextView android:text="Quantity *" android:layout_marginTop="16dp" style="@style/LabelStyle"/>
-            <EditText android:hint="# e.g., 4 servings" style="@style/InputStyle"/>
+            <EditText
+                android:id="@+id/etPrice"
+                style="@style/InputStyle"
+                android:hint="$ 0.00"
+                android:inputType="numberDecimal" />
 
-            <TextView android:text="Pickup Time *" android:layout_marginTop="16dp" style="@style/LabelStyle"/>
-            <EditText android:hint="Clock icon: Today 6-8pm" style="@style/InputStyle"/>
+            <TextView
+                style="@style/LabelStyle"
+                android:layout_marginTop="16dp"
+                android:text="Quantity *" />
 
-            <Button
-                android:id="@+id/btnList"
+            <EditText
+                android:id="@+id/etQuantity"
+                style="@style/InputStyle"
+                android:hint="# e.g., 4 servings" />
+
+            <TextView
+                style="@style/LabelStyle"
+                android:layout_marginTop="16dp"
+                android:text="Pickup Time *" />
+
+            <EditText
+                android:id="@+id/etPickupTime"
+                style="@style/InputStyle"
+                android:hint="Clock icon: Today 6-8pm" />
+
+            <TextView
+                style="@style/LabelStyle"
+                android:layout_marginTop="16dp"
+                android:text="Location *" />
+
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:text="List for Sale"
-                android:textColor="#000000"
-                android:textStyle="bold"
-                android:backgroundTint="#FFEB3B"
-                app:cornerRadius="12dp"
-                android:layout_marginTop="32dp"/>
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
+                <EditText
+                    android:id="@+id/etLocation"
+                    style="@style/InputStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="Enter address"
+                    android:inputType="textPostalAddress" />
+
+                <Button
+                    android:id="@+id/btnSearchLocation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Search" />
+            </LinearLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:layout_marginTop="16dp">
+
+                <org.osmdroid.views.MapView
+                    android:id="@+id/mapView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
+                    android:orientation="vertical"
+                    android:padding="8dp">
+
+                    <ImageButton
+                        android:id="@+id/btnZoomIn"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:src="@android:drawable/ic_menu_add" />
+
+                    <ImageButton
+                        android:id="@+id/btnZoomOut"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:src="@android:drawable/ic_menu_delete" />
+                </LinearLayout>
+
+            </RelativeLayout>
         </LinearLayout>
-    </ScrollView>
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
+</RelativeLayout>

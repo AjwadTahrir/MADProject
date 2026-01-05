@@ -1,54 +1,99 @@
 package com.example.madproject;
 
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Bundle;
-
-import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
-import android.os.Bundle;
+import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.content.Intent;
+
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.widget.NestedScrollView;
+
+import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
+import org.osmdroid.util.GeoPoint;
+import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.Marker;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
 
 public class FoodDetailsActivity extends AppCompatActivity {
+
+    private NestedScrollView nestedScrollView;
+    private MapView mapDetailView;
+    private String location;
+    private ImageButton btnZoomInDetail, btnZoomOutDetail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_food_details);
 
-        // 1. Initialize Views
-        TextView tvTitle = findViewById(R.id.tvDetailTitle);
-        TextView tvPrice = findViewById(R.id.tvDetailPrice);
-        ImageView imgFood = findViewById(R.id.imgDetailFood);
+        nestedScrollView = findViewById(R.id.nestedScrollView);
+        TextView tvDetailLocation = findViewById(R.id.tvDetailLocation);
+        mapDetailView = findViewById(R.id.mapDetailView);
+        btnZoomInDetail = findViewById(R.id.btnZoomInDetail);
+        btnZoomOutDetail = findViewById(R.id.btnZoomOutDetail);
         ImageView btnBack = findViewById(R.id.btnBack);
 
-        // 2. Get Data passed from Search Page
-        String title = getIntent().getStringExtra("FOOD_TITLE");
-        String price = getIntent().getStringExtra("FOOD_PRICE");
-        int imageResId = getIntent().getIntExtra("FOOD_IMAGE", 0);
+        // --- FIX FOR BACK BUTTON --- 
+        btnBack.setOnClickListener(v -> finish());
 
-        // 3. Set the Data to the Views
-        if (title != null) tvTitle.setText(title);
-        if (price != null) tvPrice.setText(price);
-        if (imageResId != 0) imgFood.setImageResource(imageResId);
+        // Retrieve the location from the intent
+        location = getIntent().getStringExtra("location");
 
-        // 4. Handle Back Button Click
-        btnBack.setOnClickListener(v -> finish()); // Closes this screen and goes back
+        if (location != null && !location.isEmpty()) {
+            tvDetailLocation.setText(location);
+            setupMap();
+        } else {
+            tvDetailLocation.setText("Location not available");
+        }
 
-        // 5. Handle Request Button (Placeholder for next step)
-        findViewById(R.id.btnRequest).setOnClickListener(v -> {
-            findViewById(R.id.btnRequest).setOnClickListener(view -> {
-                Intent intent = new Intent(FoodDetailsActivity.this, ReservationActivity.class);
-                // Pass the same data forward
-                intent.putExtra("FOOD_TITLE", title);
-                intent.putExtra("FOOD_PRICE", price);
-                intent.putExtra("FOOD_IMAGE", imageResId);
-                startActivity(intent);
-            });
-        });
+        btnZoomInDetail.setOnClickListener(v -> mapDetailView.getController().zoomIn());
+        btnZoomOutDetail.setOnClickListener(v -> mapDetailView.getController().zoomOut());
+    }
+
+    private void setupMap() {
+        mapDetailView.setTileSource(TileSourceFactory.MAPNIK);
+        mapDetailView.setMultiTouchControls(true);
+
+        GeoPoint locationPoint = getGeoPointFromAddress(location);
+        if (locationPoint != null) {
+            Marker marker = new Marker(mapDetailView);
+            marker.setPosition(locationPoint);
+            marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+            mapDetailView.getOverlays().add(marker);
+            mapDetailView.getController().setZoom(17.0);
+            mapDetailView.getController().setCenter(locationPoint);
+        }
+    }
+
+    private GeoPoint getGeoPointFromAddress(String address) {
+        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+        try {
+            List<Address> addresses = geocoder.getFromLocationName(address, 1);
+            if (addresses != null && !addresses.isEmpty()) {
+                Address location = addresses.get(0);
+                return new GeoPoint(location.getLatitude(), location.getLongitude());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mapDetailView.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mapDetailView.onPause();
     }
 }

@@ -1,40 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FFFFFF">
 
-    <ImageView
-        android:id="@+id/btnBack"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:src="@drawable/ic_back_arrow"
-        app:tint="#000000"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Food Details"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:textColor="#000000"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/btnBack"
-        app:layout_constraintBottom_toBottomOf="@id/btnBack"/>
-
-    <ScrollView
+    <RelativeLayout
+        android:id="@+id/headerDetailLayout"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp"
-        app:layout_constraintTop_toBottomOf="@id/btnBack"
-        app:layout_constraintBottom_toTopOf="@id/btnRequest">
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:padding="16dp">
+
+        <ImageView
+            android:id="@+id/btnBack"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/ic_back_arrow"
+            app:tint="#000000" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="Food Details"
+            android:textColor="#000000"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+    </RelativeLayout>
+
+    <Button
+        android:id="@+id/btnRequest"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="16dp"
+        android:backgroundTint="#FFEB3B"
+        android:text="Request This Food"
+        android:textColor="#000000"
+        android:textStyle="bold"
+        app:cornerRadius="12dp" />
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/nestedScrollView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/btnRequest"
+        android:layout_below="@+id/headerDetailLayout">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -45,12 +59,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="220dp"
                 android:background="#F0F4C3">
+
                 <ImageView
                     android:id="@+id/imgDetailFood"
                     android:layout_width="150dp"
                     android:layout_height="150dp"
                     android:layout_gravity="center"
-                    android:src="@drawable/ic_launcher_foreground"/>
+                    android:src="@drawable/ic_launcher_foreground" />
             </FrameLayout>
 
             <LinearLayout
@@ -70,143 +85,121 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="Homemade Lasagna"
+                        android:textColor="#000000"
                         android:textSize="22sp"
-                        android:textStyle="bold"
-                        android:textColor="#000000"/>
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/tvDetailPrice"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="$8"
+                        android:textColor="#00897B"
                         android:textSize="22sp"
-                        android:textStyle="bold"
-                        android:textColor="#00897B"/>
+                        android:textStyle="bold" />
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginTop="4dp">
+                    android:layout_marginTop="4dp"
+                    android:orientation="horizontal">
+
                     <ImageView
                         android:layout_width="16dp"
                         android:layout_height="16dp"
                         android:src="@android:drawable/btn_star_big_on"
-                        app:tint="#FFD700"/>
+                        app:tint="#FFD700" />
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text=" 4.9 • 24 reviews"
-                        android:textColor="#757575"/>
+                        android:textColor="#757575" />
                 </LinearLayout>
 
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:background="#EEEEEE"
                     android:layout_marginTop="16dp"
-                    android:layout_marginBottom="16dp"/>
+                    android:layout_marginBottom="16dp"
+                    android:background="#EEEEEE" />
 
                 <TextView
+                    android:id="@+id/tvDetailLocation"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Downtown San Francisco, CA"
-                    android:textColor="#000000"
                     android:drawableStart="@android:drawable/ic_menu_mylocation"
                     android:drawablePadding="8dp"
-                    android:gravity="center_vertical"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Today, 6:00 PM - 8:00 PM"
-                    android:layout_marginTop="8dp"
-                    android:textColor="#000000"
-                    android:drawableStart="@android:drawable/ic_menu_recent_history"
-                    android:drawablePadding="8dp"
-                    android:gravity="center_vertical"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Description"
-                    android:textStyle="bold"
-                    android:textSize="18sp"
-                    android:textColor="#000000"
-                    android:layout_marginTop="24dp"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Delicious homemade lasagna with fresh mozzarella, ricotta, and homemade tomato sauce. Made today and still warm! Perfect for 4 servings."
-                    android:lineSpacingExtra="4dp"
-                    android:textColor="#616161"
-                    android:layout_marginTop="8dp"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Seller Information"
-                    android:textStyle="bold"
-                    android:textSize="18sp"
-                    android:textColor="#000000"
-                    android:layout_marginTop="24dp"/>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
                     android:gravity="center_vertical"
-                    android:layout_marginTop="12dp">
+                    android:text="Location not available"
+                    android:textColor="#000000" />
 
-                    <androidx.cardview.widget.CardView
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
-                        app:cardCornerRadius="25dp"
-                        app:cardBackgroundColor="#8BC34A">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="MR"
-                            android:textColor="#FFFFFF"
-                            android:textStyle="bold"
-                            android:layout_gravity="center"/>
-                    </androidx.cardview.widget.CardView>
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:layout_marginTop="8dp">
+
+                    <org.osmdroid.views.MapView
+                        android:id="@+id/mapDetailView"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
 
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_alignParentTop="true"
+                        android:layout_alignParentEnd="true"
                         android:orientation="vertical"
-                        android:layout_marginStart="12dp">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Maria Rodriguez"
-                            android:textStyle="bold"
-                            android:textColor="#000000"/>
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="4.8 ★ • 45 foods shared"
-                            android:textSize="12sp"/>
+                        android:padding="8dp">
+
+                        <ImageButton
+                            android:id="@+id/btnZoomInDetail"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            android:src="@android:drawable/ic_menu_add" />
+
+                        <ImageButton
+                            android:id="@+id/btnZoomOutDetail"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            android:src="@android:drawable/ic_menu_delete" />
                     </LinearLayout>
-                </LinearLayout>
+
+                </RelativeLayout>
+
+                <TextView
+                    android:id="@+id/tvDetailPickupTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:drawableStart="@android:drawable/ic_menu_recent_history"
+                    android:drawablePadding="8dp"
+                    android:gravity="center_vertical"
+                    android:text="Today, 6:00 PM - 8:00 PM"
+                    android:textColor="#000000" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:text="Description"
+                    android:textColor="#000000"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvDetailDescription"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:lineSpacingExtra="4dp"
+                    android:text="Delicious homemade lasagna..."
+                    android:textColor="#616161" />
+
+                <!-- Seller Info -->
 
             </LinearLayout>
         </LinearLayout>
-    </ScrollView>
-
-    <Button
-        android:id="@+id/btnRequest"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_margin="16dp"
-        android:text="Request This Food"
-        android:textColor="#000000"
-        android:textStyle="bold"
-        android:backgroundTint="#FFEB3B"
-        app:cornerRadius="12dp"
-        app:layout_constraintBottom_toBottomOf="parent"/>
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
+</RelativeLayout>
