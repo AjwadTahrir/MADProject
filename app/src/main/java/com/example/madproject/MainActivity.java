@@ -65,9 +65,9 @@ public class MainActivity extends AppCompatActivity {
 
         // 3. Create Data
         List<ActivityItem> activityList = new ArrayList<>();
-        activityList.add(new ActivityItem("Listed new food", "Fresh Vegetables", "2h ago"));
-        activityList.add(new ActivityItem("Received request", "Leftover Pizza", "5h ago"));
-        activityList.add(new ActivityItem("Completed sharing", "Homemade Bread", "1d ago"));
+        activityList.add(new ActivityItem("Listed new food", "Fresh Vegetables", "2h ago", "1600 Amphitheatre Parkway, Mountain View, CA"));
+        activityList.add(new ActivityItem("Received request", "Leftover Pizza", "5h ago", "1 Infinite Loop, Cupertino, CA"));
+        activityList.add(new ActivityItem("Completed sharing", "Homemade Bread", "1d ago", "350 5th Ave, New York, NY"));
 
         // 4. Set Adapter
         ActivityAdapter activityAdapter = new ActivityAdapter(activityList);
