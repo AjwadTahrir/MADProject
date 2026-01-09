@@ -116,33 +116,53 @@
                     android:visibility="gone" />
             </LinearLayout>
 
-            <TextView android:text="Title *" android:layout_marginTop="20dp" style="@style/LabelStyle"/>
-            <EditText android:id="@+id/etTitle"
-                android:hint="e.g., Fresh homemade lasagna"
-                style="@style/InputStyle"/>
+            <TextView
+                style="@style/LabelStyle"
+                android:layout_marginTop="20dp"
+                android:text="Title *" />
+
+            <EditText
+                android:id="@+id/etTitle"
+                style="@style/InputStyle"
+                android:hint="e.g., Fresh homemade lasagna" />
+
+            <TextView
+                style="@style/LabelStyle"
+                android:layout_marginTop="16dp"
+                android:text="Description *" />
 
             <EditText
                 android:id="@+id/etDescription"
-                android:hint="Describe the food, ingredients, allergens..."
                 style="@style/InputStyle"
                 android:gravity="top"
                 android:hint="Describe the food, ingredients, allergens..."
                 android:minLines="3" />
 
-            <TextView android:text="Price *" android:layout_marginTop="16dp" style="@style/LabelStyle"/>
-            <EditText android:id="@+id/etPrice"
-                android:hint="$ 0.00"
-                android:inputType="numberDecimal"
-                style="@style/InputStyle"/>
+            <TextView
+                style="@style/LabelStyle"
+                android:layout_marginTop="16dp"
+                android:text="Price *" />
 
-            <TextView android:text="Quantity *" android:layout_marginTop="16dp" style="@style/LabelStyle"/>
-            <EditText android:id="@+id/etQuantity"
-                android:hint="# e.g., 4 servings"
-                style="@style/InputStyle"/>
-            <TextView android:text="Pickup Time *" android:layout_marginTop="16dp" style="@style/LabelStyle"/>
-            <EditText android:id="@+id/etPickup"
-                android:hint="Today 6-8pm"
-                style="@style/InputStyle"/>
+            <EditText
+                android:id="@+id/etPrice"
+                style="@style/InputStyle"
+                android:hint="$ 0.00"
+                android:inputType="numberDecimal" />
+
+            <TextView
+                style="@style/LabelStyle"
+                android:layout_marginTop="16dp"
+                android:text="Quantity *" />
+
+            <EditText
+                android:id="@+id/etQuantity"
+                style="@style/InputStyle"
+                android:hint="# e.g., 4 servings" />
+
+            <TextView
+                style="@style/LabelStyle"
+                android:layout_marginTop="16dp"
+                android:text="Pickup Time *" />
 
             <EditText
                 android:id="@+id/etPickupTime"

@@ -2,106 +2,90 @@ package com.example.madproject;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.ImageButton;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.ArrayList;
 import java.util.List;
+import android.view.View;
 
 public class FoodsActivity extends AppCompatActivity {
-
-    // Member variables for Firestore data handling
-    private MyFoodsAdapter adapter;
-    private List<MyFoodItem> foodList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_foods);
 
-        // 1. Setup RecyclerView and Adapter
-        RecyclerView recyclerView = findViewById(R.id.recyclerMyFoods);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-        foodList = new ArrayList<>();
-        adapter = new MyFoodsAdapter(this, foodList);
-        recyclerView.setAdapter(adapter);
-
-        // 2. Fetch data from Firebase
-        loadMyFoods();
-
-        // 3. Setup Bottom Navigation
-        setupBottomNav();
-
-        // 4. Setup Add Button (Bottom Sheet)
-        setupAddButton();
-    }
-
-    private void loadMyFoods() {
-        String currentUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-
-        // Listens for real-time updates in the "foods" collection
-        FirebaseFirestore.getInstance().collection("foods")
-                .whereEqualTo("ownerId", currentUid)
-                .addSnapshotListener((value, error) -> {
-                    if (error != null) return;
-
-                    if (value != null) {
-                        foodList.clear(); // Clear static/old data
-                        for (DocumentSnapshot doc : value.getDocuments()) {
-                            // Converts Firestore document to your MyFoodItem object
-                            MyFoodItem item = doc.toObject(MyFoodItem.class);
-                            foodList.add(item);
-                        }
-                        adapter.notifyDataSetChanged(); // Refresh UI
-                    }
-                });
-    }
-
-    private void setupBottomNav() {
+        // 1. Setup Bottom Navigation (Linking it to other pages)
         BottomNavigationView bottomNav = findViewById(R.id.bottomNav);
-        bottomNav.setSelectedItemId(R.id.nav_foods);
+        bottomNav.setSelectedItemId(R.id.nav_foods); // You need to add 'nav_foods' to your menu XML later if not there
+
         bottomNav.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
             if (itemId == R.id.nav_home) {
-                startActivity(new Intent(this, MainActivity.class));
+                startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                overridePendingTransition(0, 0);
                 return true;
             } else if (itemId == R.id.nav_search) {
-                startActivity(new Intent(this, SearchActivity.class));
+                startActivity(new Intent(getApplicationContext(), SearchActivity.class));
+                overridePendingTransition(0, 0);
+                return true;
+            } else if (itemId == R.id.nav_foods) {
                 return true;
             } else if (itemId == R.id.nav_profile) {
-                startActivity(new Intent(this, ProfileActivity.class));
+                startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
+                overridePendingTransition(0, 0);
                 return true;
             }
-            return itemId == R.id.nav_foods;
+            return false;
         });
-    }
 
-    private void setupAddButton() {
+        // 2. Setup List Data
+        RecyclerView recyclerView = findViewById(R.id.recyclerMyFoods);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        List<MyFoodItem> foodList = new ArrayList<>();
+        foodList.add(new MyFoodItem("Homemade Lasagna", "$8", "active", "Dec 10", R.drawable.ic_launcher_background));
+        foodList.add(new MyFoodItem("Leftover Pizza", "Free", "active", "Dec 9", R.drawable.ic_launcher_background));
+        foodList.add(new MyFoodItem("Fresh Bread", "$5", "sold", "Dec 8", R.drawable.ic_launcher_background));
+        foodList.add(new MyFoodItem("Fresh Vegetables", "Free", "active", "Dec 7", R.drawable.ic_launcher_background));
+
+        MyFoodsAdapter adapter = new MyFoodsAdapter(this, foodList);
+        recyclerView.setAdapter(adapter);
+
+        // 3. Setup Add Button Logic
         ImageButton btnAdd = findViewById(R.id.btnAddFood);
         btnAdd.setOnClickListener(v -> {
+            // Create the Bottom Sheet Dialog
             com.google.android.material.bottomsheet.BottomSheetDialog dialog =
                     new com.google.android.material.bottomsheet.BottomSheetDialog(this);
+
+            // Inflate the layout we just created
             View sheetView = getLayoutInflater().inflate(R.layout.bottom_sheet_add, null);
             dialog.setContentView(sheetView);
 
+            // Handle clicks inside the sheet
             sheetView.findViewById(R.id.btnCloseSheet).setOnClickListener(view -> dialog.dismiss());
-            sheetView.findViewById(R.id.cardSell).setOnClickListener(view -> openAddFood("SELL", dialog));
-            sheetView.findViewById(R.id.cardFree).setOnClickListener(view -> openAddFood("FREE", dialog));
+
+            sheetView.findViewById(R.id.cardSell).setOnClickListener(view -> {
+                dialog.dismiss();
+                // Go to Add Food Page (Mode: Sell)
+                Intent intent = new Intent(FoodsActivity.this, AddFoodActivity.class);
+                intent.putExtra("MODE", "SELL");
+                startActivity(intent);
+            });
+
+            sheetView.findViewById(R.id.cardFree).setOnClickListener(view -> {
+                dialog.dismiss();
+                // Go to Add Food Page (Mode: Free)
+                Intent intent = new Intent(FoodsActivity.this, AddFoodActivity.class);
+                intent.putExtra("MODE", "FREE");
+                startActivity(intent);
+            });
+
             dialog.show();
         });
-    }
-
-    private void openAddFood(String mode, com.google.android.material.bottomsheet.BottomSheetDialog dialog) {
-        dialog.dismiss();
-        Intent intent = new Intent(FoodsActivity.this, AddFoodActivity.class);
-        intent.putExtra("MODE", mode);
-        startActivity(intent);
     }
 }
