@@ -1,5 +1,7 @@
 package com.example.madproject;
 
+import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,9 +28,19 @@ public class ActivityAdapter extends RecyclerView.Adapter<ActivityAdapter.Activi
     @Override
     public void onBindViewHolder(@NonNull ActivityViewHolder holder, int position) {
         ActivityItem item = list.get(position);
-        holder.tvAction.setText(item.action);
-        holder.tvDetails.setText(item.details);
-        holder.tvTime.setText(item.time);
+        holder.tvAction.setText(item.getAction());
+        holder.tvDetails.setText(item.getDetails());
+        holder.tvTime.setText(item.getTime());
+
+        holder.itemView.setOnClickListener(v -> {
+            Context context = v.getContext();
+            Intent intent = new Intent(context, FoodDetailsActivity.class);
+            intent.putExtra("location", item.getLocation());
+            // You can pass more data here if needed
+            // intent.putExtra("title", item.getDetails());
+            // intent.putExtra("time", item.getTime());
+            context.startActivity(intent);
+        });
     }
 
     @Override

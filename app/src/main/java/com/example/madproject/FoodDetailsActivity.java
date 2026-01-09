@@ -1,19 +1,31 @@
 package com.example.madproject;
 
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Bundle;
-
-import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
-import android.os.Bundle;
+import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.content.Intent;
+
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.widget.NestedScrollView;
+
+import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
+import org.osmdroid.util.GeoPoint;
+import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.Marker;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
 
 public class FoodDetailsActivity extends AppCompatActivity {
+
+    private NestedScrollView nestedScrollView;
+    private MapView mapDetailView;
+    private String location;
+    private ImageButton btnZoomInDetail, btnZoomOutDetail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
