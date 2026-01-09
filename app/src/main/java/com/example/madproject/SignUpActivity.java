@@ -1,61 +1,42 @@
 package com.example.madproject;
 
+import android.os.Bundle;
+
+import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.EditText;
+import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.AppCompatButton;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.FirebaseFirestore;
-import java.util.HashMap;
-import java.util.Map;
 
 public class SignUpActivity extends AppCompatActivity {
-
-    private FirebaseAuth mAuth;
-    private FirebaseFirestore db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
 
-        mAuth = FirebaseAuth.getInstance();
-        db = FirebaseFirestore.getInstance();
+        Button btnRegister = findViewById(R.id.btnRegister);
+        TextView tvLoginLink = findViewById(R.id.tvLoginLink);
 
-        EditText etFullName = findViewById(R.id.etFullName);
-        EditText etEmail = findViewById(R.id.etEmail);
-        EditText etPassword = findViewById(R.id.etPassword);
-        AppCompatButton btnRegister = findViewById(R.id.btnRegister);
-
+        // 1. Handle Register Button
         btnRegister.setOnClickListener(v -> {
-            String name = etFullName.getText().toString().trim();
-            String email = etEmail.getText().toString().trim();
-            String password = etPassword.getText().toString().trim();
+            Toast.makeText(this, "Account Created Successfully!", Toast.LENGTH_SHORT).show();
 
-            if (name.isEmpty()) { // Validation
-                etFullName.setError("Name required");
-                return;
-            }
+            // Go to Home Page
+            Intent intent = new Intent(SignUpActivity.this, MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+        });
 
-            mAuth.createUserWithEmailAndPassword(email, password)
-                    .addOnCompleteListener(this, task -> {
-                        if (task.isSuccessful()) {
-                            String uid = mAuth.getCurrentUser().getUid();
-                            Map<String, Object> userMap = new HashMap<>();
-                            userMap.put("name", name);
-                            userMap.put("email", email);
-                            db.collection("users").document(uid).set(userMap)
-                                    .addOnSuccessListener(aVoid -> {
-                            Toast.makeText(this, "Account Created!", Toast.LENGTH_SHORT).show();
-                            startActivity(new Intent(SignUpActivity.this, MainActivity.class));
-                            finish();
-                                    });
-                        } else {
-                            Toast.makeText(this, "Registration Failed: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
-                        }
-                    });
+        // 2. Handle "Login" Link (Go back to Login Page)
+        tvLoginLink.setOnClickListener(v -> {
+            finish(); // Just close this activity to reveal LoginActivity behind it
         });
     }
 }
