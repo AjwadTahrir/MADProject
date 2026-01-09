@@ -16,7 +16,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
@@ -37,29 +36,34 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
 public class AddFoodActivity extends AppCompatActivity {
 
-    private NestedScrollView nestedScrollView;
     private LinearLayout uploadContainer;
     private View placeholderState;
     private ImageView ivSelectedImage;
-    private MapView mapView;
-    private EditText etLocation;
-    private Button btnSearchLocation;
-    private ImageButton btnZoomIn, btnZoomOut;
-    private Marker currentMarker;
-    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
+    private EditText etTitle, etDescription, etPrice, etQuantity, etPickup;
+    private String mode;
+    private Uri imageUri; // Variable to store the picked image URI
 
+    // Image Picker Launcher
     private final ActivityResultLauncher<String> pickImageLauncher = registerForActivityResult(
             new ActivityResultContracts.GetContent(),
-            new ActivityResultCallback<Uri>() {
-                @Override
-                public void onActivityResult(Uri result) {
-                    if (result != null) {
-                        placeholderState.setVisibility(View.GONE);
-                        ivSelectedImage.setVisibility(View.VISIBLE);
-                        ivSelectedImage.setImageURI(result);
-                    }
+            result -> {
+                if (result != null) {
+                    imageUri = result;
+                    placeholderState.setVisibility(View.GONE);
+                    ivSelectedImage.setVisibility(View.VISIBLE);
+                    ivSelectedImage.setImageURI(result);
                 }
             });
 
@@ -68,59 +72,79 @@ public class AddFoodActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_food);
 
-        nestedScrollView = findViewById(R.id.nestedScrollView);
-        TextView tvTitle = findViewById(R.id.tvAddTitle);
-        EditText etPrice = findViewById(R.id.etPrice);
-        Button btnList = findViewById(R.id.btnList);
-        ImageView btnBack = findViewById(R.id.btnBackAdd);
-        ImageView btnClose = findViewById(R.id.btnCloseAdd);
+        // 1. Initialize Views
+        initViews();
+
+        // 2. Setup Mode (Sell vs Free)
+        mode = getIntent().getStringExtra("MODE");
+        setupModeUI();
+
+        // 3. Image Picker Click
+        uploadContainer.setOnClickListener(v -> pickImageLauncher.launch("image/*"));
+
+        // 4. Back/Close Actions
+        findViewById(R.id.btnBackAdd).setOnClickListener(v -> finish());
+        findViewById(R.id.btnCloseAdd).setOnClickListener(v -> finish());
+
+        // 5. List Button Click
+        findViewById(R.id.btnList).setOnClickListener(v -> validateAndUpload());
+    }
+
+    private void initViews() {
         uploadContainer = findViewById(R.id.uploadContainer);
         placeholderState = findViewById(R.id.placeholderState);
         ivSelectedImage = findViewById(R.id.ivSelectedImage);
-        etLocation = findViewById(R.id.etLocation);
-        btnSearchLocation = findViewById(R.id.btnSearchLocation);
-        mapView = findViewById(R.id.mapView);
-        btnZoomIn = findViewById(R.id.btnZoomIn);
-        btnZoomOut = findViewById(R.id.btnZoomOut);
+        etTitle = findViewById(R.id.etTitle);
+        etDescription = findViewById(R.id.etDescription);
+        etPrice = findViewById(R.id.etPrice);
+        etQuantity = findViewById(R.id.etQuantity);
+        etPickup = findViewById(R.id.etPickup);
+    }
 
-        mapView.setTileSource(TileSourceFactory.MAPNIK);
-        mapView.setMultiTouchControls(true);
+    private void setupModeUI() {
+        TextView tvTitle = findViewById(R.id.tvAddTitle);
+        Button btnList = findViewById(R.id.btnList);
 
-        String mode = getIntent().getStringExtra("MODE");
-        if (mode != null && mode.equals("FREE")) {
+        if ("FREE".equals(mode)) {
             tvTitle.setText("List Free Food");
             btnList.setText("List for Free");
-            if (etPrice != null) {
-                etPrice.setText("0.00");
-                etPrice.setEnabled(false);
-                etPrice.setVisibility(View.GONE);
-            }
+            etPrice.setText("0.00");
+            etPrice.setEnabled(false);
+            etPrice.setVisibility(View.GONE);
         } else {
             tvTitle.setText("Sell Food");
             btnList.setText("List for Sale");
         }
+    }
 
-        View.OnClickListener closeAction = v -> finish();
-        btnBack.setOnClickListener(closeAction);
-        btnClose.setOnClickListener(closeAction);
+    private void validateAndUpload() {
+        String title = etTitle.getText().toString().trim();
+        String desc = etDescription.getText().toString().trim();
+        String price = etPrice.getText().toString().trim();
 
-        uploadContainer.setOnClickListener(v -> pickImageLauncher.launch("image/*"));
+        if (title.isEmpty() || desc.isEmpty() || imageUri == null) {
+            Toast.makeText(this, "Please add a photo, title, and description", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
-        btnList.setOnClickListener(v -> {
-            String title = ((EditText) findViewById(R.id.etTitle)).getText().toString();
-            String description = ((EditText) findViewById(R.id.etDescription)).getText().toString();
-            String price = etPrice.getText().toString();
-            String quantity = ((EditText) findViewById(R.id.etQuantity)).getText().toString();
-            String pickupTime = ((EditText) findViewById(R.id.etPickupTime)).getText().toString();
-            String location = etLocation.getText().toString();
+        uploadImageToStorage(title, desc, price);
+    }
 
-            if (title.isEmpty() || description.isEmpty() || price.isEmpty() || quantity.isEmpty() || pickupTime.isEmpty() || location.isEmpty()) {
-                Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show();
-                return;
-            }
+    private void uploadImageToStorage(String title, String desc, String price) {
+        // Show a toast or progress bar here
+        Toast.makeText(this, "Uploading...", Toast.LENGTH_SHORT).show();
 
-            Toast.makeText(this, "Food Listed Successfully!", Toast.LENGTH_SHORT).show();
-            finish();
+        // Create a unique filename for the image
+        String fileName = UUID.randomUUID().toString() + ".jpg";
+        StorageReference storageRef = FirebaseStorage.getInstance().getReference().child("food_images/" + fileName);
+
+        storageRef.putFile(imageUri).addOnSuccessListener(taskSnapshot -> {
+            // Image uploaded! Now get the download URL
+            storageRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                saveFoodToFirestore(title, desc, price, uri.toString());
+            });
+        }).addOnFailureListener(e -> {
+            Toast.makeText(this, "Image Upload Failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         });
 
         btnSearchLocation.setOnClickListener(v -> {
@@ -223,4 +247,28 @@ public class AddFoodActivity extends AppCompatActivity {
         super.onPause();
         mapView.onPause();
     }
+
+    private void saveFoodToFirestore(String title, String desc, String price, String imageUrl) {
+        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        String uName = FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
+        Map<String, Object> food = new HashMap<>();
+        food.put("title", title);
+        food.put("description", desc);
+        food.put("price", "FREE".equals(mode) ? "Free" : "$" + price);
+        food.put("imageUrl", imageUrl); // Link to the uploaded image
+        food.put("ownerId", uid);
+        food.put("ownerName", uName != null ? uName : "Anonymous Seller");
+        food.put("status", "active");
+        food.put("timestamp", FieldValue.serverTimestamp());
+
+        FirebaseFirestore.getInstance().collection("foods").add(food)
+                .addOnSuccessListener(documentReference -> {
+                    Toast.makeText(this, "Food Listed Successfully!", Toast.LENGTH_SHORT).show();
+                    finish();
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this, "Firestore Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
+    }
+
 }

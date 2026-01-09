@@ -32,68 +32,47 @@ public class FoodDetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_food_details);
 
-        nestedScrollView = findViewById(R.id.nestedScrollView);
-        TextView tvDetailLocation = findViewById(R.id.tvDetailLocation);
-        mapDetailView = findViewById(R.id.mapDetailView);
-        btnZoomInDetail = findViewById(R.id.btnZoomInDetail);
-        btnZoomOutDetail = findViewById(R.id.btnZoomOutDetail);
+        // 1. Initialize Views
+        TextView tvTitle = findViewById(R.id.tvDetailTitle);
+        TextView tvPrice = findViewById(R.id.tvDetailPrice);
+        TextView tvSellerName = findViewById(R.id.tvSellerName);
+        ImageView imgFood = findViewById(R.id.imgDetailFood);
         ImageView btnBack = findViewById(R.id.btnBack);
 
-        // --- FIX FOR BACK BUTTON --- 
-        btnBack.setOnClickListener(v -> finish());
-
-        // Retrieve the location from the intent
-        location = getIntent().getStringExtra("location");
-
-        if (location != null && !location.isEmpty()) {
-            tvDetailLocation.setText(location);
-            setupMap();
-        } else {
-            tvDetailLocation.setText("Location not available");
+        // 2. Get Data passed from Search Page
+        String title = getIntent().getStringExtra("FOOD_TITLE");
+        String price = getIntent().getStringExtra("FOOD_PRICE");
+        String imageUrl = getIntent().getStringExtra("FOOD_IMAGE_URL");
+        String sellerName = getIntent().getStringExtra("OWNER_NAME");
+        int imageResId = getIntent().getIntExtra("FOOD_IMAGE", 0);
+        if (imageUrl != null && !imageUrl.isEmpty()) {
+            com.bumptech.glide.Glide.with(this)
+                    .load(imageUrl)
+                    .placeholder(R.drawable.ic_launcher_background)
+                    .into(imgFood);
+        } else if (imageResId != 0) {
+            // Fallback to local resource for static items
+            imgFood.setImageResource(imageResId);
         }
+        // 3. Set the Data to the Views
+        if (title != null) tvTitle.setText(title);
+        if (price != null) tvPrice.setText(price);
+        if (imageResId != 0) imgFood.setImageResource(imageResId);
+        if (sellerName != null) tvSellerName.setText(sellerName);
 
-        btnZoomInDetail.setOnClickListener(v -> mapDetailView.getController().zoomIn());
-        btnZoomOutDetail.setOnClickListener(v -> mapDetailView.getController().zoomOut());
-    }
+        // 4. Handle Back Button Click
+        btnBack.setOnClickListener(v -> finish()); // Closes this screen and goes back
 
-    private void setupMap() {
-        mapDetailView.setTileSource(TileSourceFactory.MAPNIK);
-        mapDetailView.setMultiTouchControls(true);
+        // 5. Handle Request Button (Placeholder for next step){
+            findViewById(R.id.btnRequest).setOnClickListener(view -> {
+                Intent intent = new Intent(FoodDetailsActivity.this, ReservationActivity.class);
+                // Pass the same data forward
+                intent.putExtra("FOOD_TITLE", title);
+                intent.putExtra("FOOD_PRICE", price);
+                intent.putExtra("FOOD_IMAGE", imageResId);
+                intent.putExtra("OWNER_NAME", sellerName);
+                startActivity(intent);
+            });
 
-        GeoPoint locationPoint = getGeoPointFromAddress(location);
-        if (locationPoint != null) {
-            Marker marker = new Marker(mapDetailView);
-            marker.setPosition(locationPoint);
-            marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
-            mapDetailView.getOverlays().add(marker);
-            mapDetailView.getController().setZoom(17.0);
-            mapDetailView.getController().setCenter(locationPoint);
-        }
-    }
-
-    private GeoPoint getGeoPointFromAddress(String address) {
-        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
-        try {
-            List<Address> addresses = geocoder.getFromLocationName(address, 1);
-            if (addresses != null && !addresses.isEmpty()) {
-                Address location = addresses.get(0);
-                return new GeoPoint(location.getLatitude(), location.getLongitude());
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        mapDetailView.onResume();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        mapDetailView.onPause();
     }
 }
