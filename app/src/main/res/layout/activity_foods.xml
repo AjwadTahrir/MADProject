@@ -20,9 +20,10 @@
         app:layout_constraintStart_toStartOf="parent"/>
 
     <TextView
+        android:id="@+id/tvActiveCount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="3 active foods"
+        android:text="Loading active foods..."
         android:textColor="#757575"
         app:layout_constraintStart_toStartOf="@id/tvHeader"
         app:layout_constraintTop_toBottomOf="@id/tvHeader"/>

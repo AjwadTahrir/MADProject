@@ -57,6 +57,7 @@
                 style="@style/LabelStyle"
                 android:layout_marginBottom="8dp"/>
             <EditText
+                android:id="@+id/etFullName"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:background="@drawable/bg_input_field"
@@ -75,6 +76,7 @@
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="8dp"/>
             <EditText
+                android:id="@+id/etEmail"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:background="@drawable/bg_input_field"
@@ -88,11 +90,50 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="Phone Number"
+                style="@style/LabelStyle"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="8dp"/>
+            <EditText
+                android:id="@+id/etPhone"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@drawable/bg_input_field"
+                android:hint="012-3456789"
+                android:inputType="phone"
+                android:paddingStart="12dp"
+                android:drawableStart="@android:drawable/sym_action_call"
+                android:drawablePadding="12dp"
+                android:textSize="14sp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Address"
+                style="@style/LabelStyle"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="8dp"/>
+            <EditText
+                android:id="@+id/etAddress"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@drawable/bg_input_field"
+                android:hint="Your home address"
+                android:inputType="textPostalAddress"
+                android:paddingStart="12dp"
+                android:drawableStart="@android:drawable/ic_dialog_map"
+                android:drawablePadding="12dp"
+                android:textSize="14sp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:text="Password"
                 style="@style/LabelStyle"
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="8dp"/>
             <EditText
+                android:id="@+id/etPassword"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:background="@drawable/bg_input_field"

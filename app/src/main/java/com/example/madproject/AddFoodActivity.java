@@ -1,7 +1,10 @@
 package com.example.madproject;
 
+import android.location.Address;
+import android.location.Geocoder;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager; // Important for OSM
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -10,31 +13,45 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import org.osmdroid.config.Configuration;
+import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
+import org.osmdroid.util.GeoPoint;
+import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.Marker;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
 public class AddFoodActivity extends AppCompatActivity {
 
-    // Variables for the Image Picker Views
-    private LinearLayout uploadContainer;
-    private View placeholderState; // The icon and text
-    private ImageView ivSelectedImage; // The final image
+    private EditText etTitle, etDescription, etPrice, etQuantity, etPickupTime, etLocation;
+    private ImageView ivSelectedImage;
+    private View placeholderState;
+    private MapView mapView; // OSM Map
+    private Uri selectedImageUri;
+    private Marker currentMarker;
 
-    // 1. DEFINE THE IMAGE LAUNCHER
-    // This handles the result when the user picks a photo from the gallery
+    private FirebaseFirestore fStore;
+    private FirebaseAuth fAuth;
+
     private final ActivityResultLauncher<String> pickImageLauncher = registerForActivityResult(
             new ActivityResultContracts.GetContent(),
-            new ActivityResultCallback<Uri>() {
-                @Override
-                public void onActivityResult(Uri result) {
-                    if (result != null) {
-                        // Image picked successfully!
-                        placeholderState.setVisibility(View.GONE);  // Hide the "Tap to add" text
-                        ivSelectedImage.setVisibility(View.VISIBLE); // Show the image view
-                        ivSelectedImage.setImageURI(result);        // Display the image
-                    }
+            result -> {
+                if (result != null) {
+                    selectedImageUri = result;
+                    placeholderState.setVisibility(View.GONE);
+                    ivSelectedImage.setVisibility(View.VISIBLE);
+                    ivSelectedImage.setImageURI(result);
                 }
             }
     );
@@ -42,62 +59,140 @@ public class AddFoodActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // 1. IMPORTANT: Initialize OSM Configuration BEFORE setting content view
+        Configuration.getInstance().load(getApplicationContext(), PreferenceManager.getDefaultSharedPreferences(getApplicationContext()));
+
         setContentView(R.layout.activity_add_food);
 
-        // 2. INITIALIZE ALL VIEWS
-        TextView tvTitle = findViewById(R.id.tvAddTitle);
-        EditText etPrice = findViewById(R.id.etPrice);
-        Button btnList = findViewById(R.id.btnList);
-        ImageView btnBack = findViewById(R.id.btnBackAdd);
-        ImageView btnClose = findViewById(R.id.btnCloseAdd);
+        fStore = FirebaseFirestore.getInstance();
+        fAuth = FirebaseAuth.getInstance();
 
-        // Views for image picking
-        uploadContainer = findViewById(R.id.uploadContainer);
-        placeholderState = findViewById(R.id.placeholderState);
+        // Init Views
+        etTitle = findViewById(R.id.etTitle);
+        etDescription = findViewById(R.id.etDescription);
+        etPrice = findViewById(R.id.etPrice);
+        etQuantity = findViewById(R.id.etQuantity);
+        etPickupTime = findViewById(R.id.etPickupTime);
+        etLocation = findViewById(R.id.etLocation);
         ivSelectedImage = findViewById(R.id.ivSelectedImage);
+        placeholderState = findViewById(R.id.placeholderState);
+        LinearLayout uploadContainer = findViewById(R.id.uploadContainer);
 
-        // 3. CHECK INTENT MODE (Sell vs Free)
+        // 2. Setup OSM Map
+        mapView = findViewById(R.id.mapView);
+        mapView.setTileSource(TileSourceFactory.MAPNIK);
+        mapView.setMultiTouchControls(true);
+        mapView.getController().setZoom(15.0);
+
+        // Default Start Point (KL)
+        GeoPoint startPoint = new GeoPoint(3.1390, 101.6869);
+        mapView.getController().setCenter(startPoint);
+
+        // Image Picker
+        uploadContainer.setOnClickListener(v -> pickImageLauncher.launch("image/*"));
+
+        // Back / Close
+        findViewById(R.id.btnBackAdd).setOnClickListener(v -> finish());
+        findViewById(R.id.btnCloseAdd).setOnClickListener(v -> finish());
+
+        // Mode Check
         String mode = getIntent().getStringExtra("MODE");
-
-        if (mode != null && mode.equals("FREE")) {
+        TextView tvTitle = findViewById(R.id.tvAddTitle);
+        Button btnList = findViewById(R.id.btnList);
+        if ("FREE".equals(mode)) {
             tvTitle.setText("List Free Food");
             btnList.setText("List for Free");
-
-            // Hide the Price input since it's free
-            if (etPrice != null) {
-                etPrice.setText("0.00");
-                etPrice.setEnabled(false);
-                etPrice.setVisibility(View.GONE); // Hide the price field completely
-            }
-        } else {
-            tvTitle.setText("Sell Food");
-            btnList.setText("List for Sale");
+            etPrice.setText("0.00");
+            etPrice.setVisibility(View.GONE);
         }
 
-        // 4. HANDLE BACK & CLOSE BUTTONS
-        View.OnClickListener closeAction = v -> finish();
-        btnBack.setOnClickListener(closeAction);
-        btnClose.setOnClickListener(closeAction);
-
-        // 5. HANDLE IMAGE PICKER CLICK
-        uploadContainer.setOnClickListener(v -> {
-            // Launch the gallery filtering for images only
-            pickImageLauncher.launch("image/*");
+        // Search Location Button
+        findViewById(R.id.btnSearchLocation).setOnClickListener(v -> {
+            String location = etLocation.getText().toString();
+            searchLocation(location);
         });
 
-        // 6. HANDLE "LIST" BUTTON CLICK
-        btnList.setOnClickListener(v -> {
-            // Simple validation before finishing
-            if (etPrice.isEnabled() && etPrice.getText().toString().isEmpty()) {
-                Toast.makeText(this, "Please enter a price", Toast.LENGTH_SHORT).show();
-                return;
+        // List Button
+        btnList.setOnClickListener(v -> saveFoodToFirebase(mode));
+    }
+
+    private void searchLocation(String locationName) {
+        if (locationName.isEmpty()) return;
+
+        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+        try {
+            List<Address> addressList = geocoder.getFromLocationName(locationName, 1);
+            if (addressList != null && !addressList.isEmpty()) {
+                Address address = addressList.get(0);
+                GeoPoint point = new GeoPoint(address.getLatitude(), address.getLongitude());
+
+                // Update Map
+                mapView.getController().animateTo(point);
+
+                // Add Pin
+                if(currentMarker != null) mapView.getOverlays().remove(currentMarker);
+                currentMarker = new Marker(mapView);
+                currentMarker.setPosition(point);
+                currentMarker.setTitle(locationName);
+                currentMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+                mapView.getOverlays().add(currentMarker);
+                mapView.invalidate(); // Refresh map
+
+            } else {
+                Toast.makeText(this, "Location not found", Toast.LENGTH_SHORT).show();
             }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
-            // Here you would normally save data to a database
-            Toast.makeText(this, "Food Listed Successfully!", Toast.LENGTH_SHORT).show();
+    private void saveFoodToFirebase(String mode) {
+        String title = etTitle.getText().toString();
+        String desc = etDescription.getText().toString();
+        String price = etPrice.getText().toString();
+        String qty = etQuantity.getText().toString();
+        String time = etPickupTime.getText().toString();
+        String loc = etLocation.getText().toString();
 
-            // Close this page and go back
-            finish();
-        });
+        if (title.isEmpty() || desc.isEmpty() || qty.isEmpty() || time.isEmpty() || loc.isEmpty()) {
+            Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        String userId = fAuth.getCurrentUser().getUid();
+        String imageString = (selectedImageUri != null) ? selectedImageUri.toString() : "";
+        long timestamp = System.currentTimeMillis();
+
+        Map<String, Object> food = new HashMap<>();
+        food.put("userId", userId);
+        food.put("title", title);
+        food.put("description", desc);
+        food.put("price", "FREE".equals(mode) ? "Free" : price);
+        food.put("quantity", qty);
+        food.put("pickupTime", time);
+        food.put("location", loc);
+        food.put("status", "active");
+        food.put("imageUri", imageString);
+        food.put("timestamp", timestamp);
+
+        fStore.collection("foods").add(food)
+                .addOnSuccessListener(doc -> {
+                    Toast.makeText(this, "Listed Successfully!", Toast.LENGTH_SHORT).show();
+                    finish();
+                })
+                .addOnFailureListener(e -> Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mapView.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mapView.onPause();
     }
 }

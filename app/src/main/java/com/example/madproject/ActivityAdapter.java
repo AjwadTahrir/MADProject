@@ -7,6 +7,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
+import android.content.Context;
+import android.content.Intent;
 
 public class ActivityAdapter extends RecyclerView.Adapter<ActivityAdapter.ActivityViewHolder> {
 
@@ -29,6 +31,19 @@ public class ActivityAdapter extends RecyclerView.Adapter<ActivityAdapter.Activi
         holder.tvAction.setText(item.action);
         holder.tvDetails.setText(item.details);
         holder.tvTime.setText(item.time);
+        holder.tvAction.setText(item.getAction());
+        holder.tvDetails.setText(item.getDetails());
+        holder.tvTime.setText(item.getTime());
+
+        holder.itemView.setOnClickListener(v -> {
+            Context context = v.getContext();
+            Intent intent = new Intent(context, FoodDetailsActivity.class);
+            intent.putExtra("location", item.getLocation());
+            // You can pass more data here if needed
+            // intent.putExtra("title", item.getDetails());
+            // intent.putExtra("time", item.getTime());
+            context.startActivity(intent);
+        });
     }
 
     @Override

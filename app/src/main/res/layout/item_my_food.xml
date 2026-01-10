@@ -38,7 +38,7 @@
             android:id="@+id/tvMyFoodTitle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Homemade Lasagna"
+            android:text="Food Title"
             android:textStyle="bold"
             android:textColor="#000000"
             android:textSize="16sp"
@@ -52,8 +52,8 @@
             android:id="@+id/tvMyFoodPrice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="$8"
-            android:textSize="12sp"
+            android:text="$2.00 / each"
+            android:textSize="11sp"
             android:textStyle="bold"
             android:textColor="#006064"
             android:background="@drawable/bg_pill_price_cyan"
@@ -64,14 +64,20 @@
             app:layout_constraintTop_toBottomOf="@id/tvMyFoodTitle"/>
 
         <TextView
+            android:id="@+id/tvMyFoodQuantity"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Food"
-            android:textSize="12sp"
-            android:textColor="#757575"
-            android:layout_marginTop="8dp"
-            app:layout_constraintStart_toStartOf="@id/tvMyFoodTitle"
-            app:layout_constraintBottom_toBottomOf="@id/cardImg"/>
+            android:text="4/4 available"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            android:textColor="#006064"
+            android:background="@drawable/bg_pill_price_cyan"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="4dp"
+            android:layout_marginStart="8dp"
+            app:layout_constraintStart_toEndOf="@id/tvMyFoodPrice"
+            app:layout_constraintTop_toTopOf="@id/tvMyFoodPrice"
+            app:layout_constraintBottom_toBottomOf="@id/tvMyFoodPrice"/>
 
         <TextView
             android:id="@+id/tvStatus"
@@ -90,7 +96,7 @@
             android:id="@+id/tvDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Dec 10"
+            android:text="Jan 09"
             android:textSize="12sp"
             android:textColor="#BDBDBD"
             app:layout_constraintEnd_toEndOf="parent"

@@ -1,12 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item>
         <shape android:shape="oval">
-            <solid android:color="#FFEB3B"/> <size android:width="50dp" android:height="50dp"/>
+            <solid android:color="#FFEB3B"/>
+            <size android:width="50dp" android:height="50dp"/>
         </shape>
     </item>
-    <item android:drawable="@android:drawable/ic_media_play"
-        android:width="24dp"
-        android:height="24dp"
-        android:gravity="center"
-        android:tint="#000000"/>
+    <item android:gravity="center">
+        <vector android:width="24dp" android:height="24dp" android:viewportWidth="24" android:viewportHeight="24">
+            <path android:fillColor="#000000" android:pathData="M12,4l-1.41,1.41L16.17,11H4v2h12.17l-5.58,5.59L12,20l8,-8z"/>
+        </vector>
+    </item>
 </layer-list>

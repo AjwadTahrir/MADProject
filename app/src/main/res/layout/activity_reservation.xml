@@ -88,7 +88,7 @@
                                 android:id="@+id/tvResTitle"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Homemade Lasagna"
+                                android:text="Loading..."
                                 android:textStyle="bold"
                                 android:textSize="16sp"
                                 android:textColor="#000000"/>
@@ -96,7 +96,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="from Maria Rodriguez"
+                                android:text="Food Saver Item"
                                 android:textColor="#757575"
                                 android:textSize="12sp"/>
                         </LinearLayout>
@@ -112,7 +112,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Today, 6:00 PM - 8:00 PM"
+                        android:text="Pickup: Today, 6:00 PM - 8:00 PM"
                         android:textColor="#000000"
                         android:textSize="12sp"
                         android:drawableStart="@android:drawable/ic_menu_recent_history"
@@ -162,9 +162,10 @@
                                 android:textSize="12sp"
                                 android:textColor="#9E9E9E"/>
                             <TextView
+                                android:id="@+id/tvMaxQuantity"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="4 packs"
+                                android:text="1 pack"
                                 android:textStyle="bold"
                                 android:textColor="#000000"/>
                         </LinearLayout>
@@ -234,7 +235,7 @@
                             android:id="@+id/tvUnitCost"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="$8.00"
+                            android:text="$0.00"
                             android:textColor="#000000"/>
                     </LinearLayout>
 
@@ -261,7 +262,7 @@
                             android:id="@+id/tvTotalCost"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="$8.00"
+                            android:text="$0.00"
                             android:textStyle="bold"
                             android:textSize="18sp"
                             android:textColor="#00897B"/>

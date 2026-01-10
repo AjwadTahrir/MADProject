@@ -63,101 +63,22 @@
                 app:cardElevation="8dp"
                 app:cardBackgroundColor="#FFFFFF"
                 app:layout_constraintTop_toBottomOf="@id/tvProfileHeader">
-
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="24dp">
-
-                    <FrameLayout
-                        android:id="@+id/layoutAvatar"
-                        android:layout_width="80dp"
-                        android:layout_height="80dp"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent">
-
-                        <ImageView
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:src="@drawable/bg_circle_yellow"
-                            app:tint="#8BC34A"/>
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="JD"
-                            android:textColor="#FFFFFF"
-                            android:textSize="28sp"
-                            android:textStyle="bold"
-                            android:layout_gravity="center"/>
-
-                        <ImageView
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:src="@android:drawable/ic_menu_camera"
-                            android:background="@drawable/bg_circle_yellow"
-                            android:padding="4dp"
-                            android:layout_gravity="bottom|end"/>
+                    <FrameLayout android:id="@+id/layoutAvatar" android:layout_width="80dp" android:layout_height="80dp" app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent">
+                        <ImageView android:layout_width="match_parent" android:layout_height="match_parent" android:src="@drawable/bg_circle_yellow" app:tint="#8BC34A"/>
+                        <TextView android:id="@+id/tvInitials" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="JD" android:textColor="#FFFFFF" android:textSize="28sp" android:textStyle="bold" android:layout_gravity="center"/>
+                        <ImageView android:layout_width="24dp" android:layout_height="24dp" android:src="@android:drawable/ic_menu_camera" android:background="@drawable/bg_circle_yellow" android:padding="4dp" android:layout_gravity="bottom|end"/>
                     </FrameLayout>
-
-                    <TextView
-                        android:id="@+id/tvName"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="John Doe"
-                        android:textSize="20sp"
-                        android:textStyle="bold"
-                        android:textColor="#000000"
-                        android:layout_marginStart="16dp"
-                        app:layout_constraintStart_toEndOf="@id/layoutAvatar"
-                        app:layout_constraintTop_toTopOf="@id/layoutAvatar"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Food Saver"
-                        android:textColor="#757575"
-                        app:layout_constraintStart_toStartOf="@id/tvName"
-                        app:layout_constraintTop_toBottomOf="@id/tvName"/>
-
-                    <View
-                        android:id="@+id/divider1"
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:background="#EEEEEE"
-                        android:layout_marginTop="16dp"
-                        app:layout_constraintTop_toBottomOf="@id/layoutAvatar"/>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:layout_marginTop="16dp"
-                        app:layout_constraintTop_toBottomOf="@id/divider1">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="john.doe@example.com"
-                            android:drawableStart="@android:drawable/sym_action_email"
-                            android:drawablePadding="12dp"
-                            android:gravity="center_vertical"
-                            android:layout_marginBottom="8dp"/>
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="+1 (555) 123-4567"
-                            android:drawableStart="@android:drawable/sym_action_call"
-                            android:drawablePadding="12dp"
-                            android:gravity="center_vertical"
-                            android:layout_marginBottom="8dp"/>
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="San Francisco, CA"
-                            android:drawableStart="@android:drawable/ic_menu_mylocation"
-                            android:drawablePadding="12dp"
-                            android:gravity="center_vertical"/>
+                    <TextView android:id="@+id/tvName" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Loading..." android:textSize="20sp" android:textStyle="bold" android:textColor="#000000" android:layout_marginStart="16dp" app:layout_constraintStart_toEndOf="@id/layoutAvatar" app:layout_constraintTop_toTopOf="@id/layoutAvatar"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Food Saver" android:textColor="#757575" app:layout_constraintStart_toStartOf="@id/tvName" app:layout_constraintTop_toBottomOf="@id/tvName"/>
+                    <View android:id="@+id/divider1" android:layout_width="match_parent" android:layout_height="1dp" android:background="#EEEEEE" android:layout_marginTop="16dp" app:layout_constraintTop_toBottomOf="@id/layoutAvatar"/>
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:layout_marginTop="16dp" app:layout_constraintTop_toBottomOf="@id/divider1">
+                        <TextView android:id="@+id/tvEmail" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="loading..." android:drawableStart="@android:drawable/sym_action_email" android:drawablePadding="12dp" android:gravity="center_vertical" android:layout_marginBottom="8dp"/>
+                        <TextView android:id="@+id/tvPhone" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="loading..." android:drawableStart="@android:drawable/sym_action_call" android:drawablePadding="12dp" android:gravity="center_vertical" android:layout_marginBottom="8dp"/>
+                        <TextView android:id="@+id/tvAddress" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="loading..." android:drawableStart="@android:drawable/ic_menu_mylocation" android:drawablePadding="12dp" android:gravity="center_vertical"/>
                     </LinearLayout>
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </androidx.cardview.widget.CardView>
@@ -172,52 +93,20 @@
                 app:cardElevation="2dp"
                 app:cardBackgroundColor="#FFFFFF"
                 app:layout_constraintTop_toBottomOf="@id/cardProfile">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="16dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Your Impact"
-                        android:layout_gravity="center"
-                        android:textColor="#757575"/>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginTop="12dp">
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="center"
-                            android:orientation="vertical">
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="16dp">
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Your Impact" android:layout_gravity="center" android:textColor="#757575"/>
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="12dp">
+                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:gravity="center" android:orientation="vertical">
                             <ImageView android:layout_width="24dp" android:layout_height="24dp" android:src="@android:drawable/ic_menu_gallery" app:tint="#4CAF50"/>
                             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="142" android:textStyle="bold" android:textColor="#4CAF50" android:textSize="18sp"/>
                             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Meals Saved" android:textSize="10sp"/>
                         </LinearLayout>
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="center"
-                            android:orientation="vertical">
+                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:gravity="center" android:orientation="vertical">
                             <ImageView android:layout_width="24dp" android:layout_height="24dp" android:src="@android:drawable/ic_menu_my_calendar" app:tint="#009688"/>
                             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="89" android:textStyle="bold" android:textColor="#009688" android:textSize="18sp"/>
                             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="People Helped" android:textSize="10sp"/>
                         </LinearLayout>
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="center"
-                            android:orientation="vertical">
+                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:gravity="center" android:orientation="vertical">
                             <ImageView android:layout_width="24dp" android:layout_height="24dp" android:src="@android:drawable/ic_menu_agenda" app:tint="#FFEB3B"/>
                             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="67" android:textStyle="bold" android:textColor="#FFC107" android:textSize="18sp"/>
                             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Shared" android:textSize="10sp"/>
@@ -236,14 +125,7 @@
                 app:cardElevation="2dp"
                 app:cardBackgroundColor="#FFFFFF"
                 app:layout_constraintTop_toBottomOf="@id/cardImpact">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:padding="16dp"
-                    android:gravity="center">
-
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:padding="16dp" android:gravity="center">
                     <LinearLayout android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:orientation="vertical" android:gravity="center">
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="24" android:textSize="18sp" android:textColor="#00695C"/>
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Foods" android:textSize="12sp"/>
@@ -271,41 +153,12 @@
                 app:cardElevation="2dp"
                 app:cardBackgroundColor="#FFFFFF"
                 app:layout_constraintTop_toBottomOf="@id/cardSocial">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="20dp">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Requests for My Foods"
-                            android:textColor="#000000"
-                            android:textStyle="bold"/>
-                        <TextView
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:text="2"
-                            android:gravity="center"
-                            android:textColor="#FFFFFF"
-                            android:textSize="12sp"
-                            android:textStyle="bold"
-                            android:background="@drawable/bg_badge_red"/>
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="20dp">
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Requests for My Foods" android:textColor="#000000" android:textStyle="bold"/>
+                        <TextView android:layout_width="24dp" android:layout_height="24dp" android:text="2" android:gravity="center" android:textColor="#FFFFFF" android:textSize="12sp" android:textStyle="bold" android:background="@drawable/bg_badge_red"/>
                     </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginTop="16dp"
-                        android:gravity="center_vertical">
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="16dp" android:gravity="center_vertical">
                         <androidx.cardview.widget.CardView android:layout_width="40dp" android:layout_height="40dp" app:cardCornerRadius="20dp" app:cardBackgroundColor="#8BC34A">
                             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="SJ" android:layout_gravity="center" android:textColor="#FFFFFF" android:textStyle="bold"/>
                         </androidx.cardview.widget.CardView>
@@ -322,16 +175,44 @@
             </androidx.cardview.widget.CardView>
 
             <Button
-                android:id="@+id/btnLogout"
+                android:id="@+id/btnRedeem"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:layout_marginHorizontal="24dp"
                 android:layout_marginTop="24dp"
+                android:text="Redeem Reservation"
+                android:textColor="#004D40"
+                android:textStyle="bold"
+                android:backgroundTint="#B2DFDB"
+                app:cornerRadius="12dp"
+                app:layout_constraintTop_toBottomOf="@id/cardRequests"/>
+
+            <Button
+                android:id="@+id/btnLogout"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginHorizontal="24dp"
+                android:layout_marginTop="16dp"
                 android:text="Logout"
                 android:textColor="#D32F2F"
                 android:backgroundTint="#FFEBEE"
                 app:cornerRadius="12dp"
-                app:layout_constraintTop_toBottomOf="@id/cardRequests"/>
+                app:layout_constraintTop_toBottomOf="@id/btnRedeem"/>
+
+            <Button
+                android:id="@+id/btnEditProfile"  android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:text="Edit Profile"
+                android:textColor="#004D40"
+                android:textSize="12sp"
+                android:backgroundTint="#FFEB3B"
+                android:layout_marginEnd="24dp"
+                app:cornerRadius="20dp"
+                app:icon="@android:drawable/ic_menu_edit"
+                app:iconTint="#004D40"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/tvProfileHeader"
+                app:layout_constraintBottom_toBottomOf="@id/tvProfileHeader"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>

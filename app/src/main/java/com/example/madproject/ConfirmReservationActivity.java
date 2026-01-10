@@ -1,17 +1,11 @@
 package com.example.madproject;
 
-import android.os.Bundle;
-
-import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
+import java.util.Locale;
 
 public class ConfirmReservationActivity extends AppCompatActivity {
 
@@ -21,22 +15,37 @@ public class ConfirmReservationActivity extends AppCompatActivity {
         setContentView(R.layout.activity_confirm_reservation);
 
         // 1. Initialize Views
+        TextView tvConfirmationId = findViewById(R.id.tvConfirmationId);
         TextView tvFoodName = findViewById(R.id.tvResFoodName);
-        TextView tvTotal = findViewById(R.id.tvResTotal);
-        Button btnNext = findViewById(R.id.btnGoToRedeem);
+        TextView tvResQuantity = findViewById(R.id.tvResQuantity);
+        TextView tvResTotal = findViewById(R.id.tvResTotal);
+        Button btnReturnHome = findViewById(R.id.btnReturnHome);
 
-        // 2. Get Data (Passed from ReservationActivity)
+        // 2. Get Data passed from ReservationActivity
+        String confirmId = getIntent().getStringExtra("CONFIRMATION_ID");
         String title = getIntent().getStringExtra("FOOD_TITLE");
-        // You might want to pass Total Price here too in the future
+        int quantity = getIntent().getIntExtra("QUANTITY", 1);
+        double totalPrice = getIntent().getDoubleExtra("TOTAL_PRICE", 0.0);
 
+        // 3. Set Data
+        if (confirmId != null) tvConfirmationId.setText(confirmId);
         if (title != null) tvFoodName.setText(title);
-        // For now, Total is hardcoded in XML or you can pass it via Intent
 
-        // 3. Handle Button Click
-        btnNext.setOnClickListener(v -> {
-            // Navigate to the "Ready to Redeem" screen (The Slider Screen)
-            Intent intent = new Intent(ConfirmReservationActivity.this, RedeemActivity.class);
+        tvResQuantity.setText(quantity + (quantity > 1 ? " packs" : " pack"));
+
+        if (totalPrice == 0.0) {
+            tvResTotal.setText("Free");
+        } else {
+            tvResTotal.setText(String.format(Locale.US, "$%.2f", totalPrice));
+        }
+
+        // 4. Logic: Return to Main Screen
+        btnReturnHome.setOnClickListener(v -> {
+            Intent intent = new Intent(ConfirmReservationActivity.this, MainActivity.class);
+            // Clear back stack so they can't swipe back to the confirmation
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
+            finish();
         });
     }
 }
