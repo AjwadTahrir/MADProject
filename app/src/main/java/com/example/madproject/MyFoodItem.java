@@ -52,4 +52,5 @@ public class MyFoodItem {
     }
 
     public void setFoodId(String foodId) { this.foodId = foodId; }
+    public void setImageUri(String imageUri) { this.imageUri = imageUri; }
 }

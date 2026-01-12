@@ -22,13 +22,14 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
+import com.bumptech.glide.Glide;
 
 public class ReservationActivity extends AppCompatActivity {
 
     int quantity = 1;
     int maxAvailable = 1;
     double unitPrice = 0.0;
-    String foodId, foodTitle, imageUrl;
+    String foodId, foodTitle, imageUrl, pickupTime, foodLocation;
 
     TextView tvQuantity, tvTotalCost, tvUnitCost, tvTitle, tvMaxQuantity;
     ImageView imgFood;
@@ -50,12 +51,21 @@ public class ReservationActivity extends AppCompatActivity {
         ImageButton btnMinus = findViewById(R.id.btnMinus);
         btnConfirm = findViewById(R.id.btnConfirm);
         ImageView btnBack = findViewById(R.id.btnBack);
+        TextView tvResPickupTime = findViewById(R.id.tvResPickupTime);
 
         // 2. Get Data from Intent
         foodTitle = getIntent().getStringExtra("FOOD_TITLE");
         String priceString = getIntent().getStringExtra("FOOD_PRICE");
         imageUrl = getIntent().getStringExtra("FOOD_IMAGE_URI");
         foodId = getIntent().getStringExtra("FOOD_ID");
+        pickupTime = getIntent().getStringExtra("FOOD_PICKUP_TIME");
+        foodLocation = getIntent().getStringExtra("FOOD_LOCATION");
+
+        if (pickupTime != null && !pickupTime.isEmpty()) {
+            tvResPickupTime.setText("Pick-up: Today," + pickupTime);
+        } else {
+            tvResPickupTime.setText("Pick-up: Today, Not specified");
+        }
 
         // Parse Max Quantity
         String qtyString = getIntent().getStringExtra("FOOD_QUANTITY_CURRENT");
@@ -77,8 +87,12 @@ public class ReservationActivity extends AppCompatActivity {
         if (foodTitle != null) tvTitle.setText(foodTitle);
         tvMaxQuantity.setText(maxAvailable + " packs");
 
+        // --- FIX: Use Glide instead of setImageURI ---
         if (imageUrl != null && !imageUrl.isEmpty()) {
-            imgFood.setImageURI(Uri.parse(imageUrl));
+            Glide.with(this)
+                    .load(imageUrl)
+                    .placeholder(R.drawable.ic_launcher_foreground)
+                    .into(imgFood);
         }
 
         // Parse Price
@@ -215,6 +229,8 @@ public class ReservationActivity extends AppCompatActivity {
                     transaction.update(resRef, "quantityReserved", newResQty);
                     transaction.update(resRef, "totalPrice", newTotalPrice);
                     transaction.update(resRef, "timestamp", System.currentTimeMillis()); // Update time so it goes to top of list
+                    transaction.update(resRef, "pickupTime", pickupTime);
+                    transaction.update(resRef, "location", foodLocation);
 
                     finalConfirmationId = existingReservationId;
 
@@ -235,6 +251,9 @@ public class ReservationActivity extends AppCompatActivity {
                     resData.put("totalPrice", unitPrice * quantity);
                     resData.put("status", "pending");
                     resData.put("timestamp", System.currentTimeMillis());
+                    resData.put("pickupTime", pickupTime);
+                    resData.put("location", foodLocation);
+
 
                     transaction.set(resRef, resData);
                 }
@@ -247,6 +266,9 @@ public class ReservationActivity extends AppCompatActivity {
             intent.putExtra("FOOD_TITLE", foodTitle);
             intent.putExtra("QUANTITY", quantity); // Show what was just added in confirmation
             intent.putExtra("TOTAL_PRICE", unitPrice * quantity);
+            intent.putExtra("FOOD_PICKUP_TIME", pickupTime);
+            intent.putExtra("FOOD_LOCATION", foodLocation);
+            intent.putExtra("FOOD_IMAGE_URI", imageUrl);
             startActivity(intent);
             finish();
         }).addOnFailureListener(e -> {

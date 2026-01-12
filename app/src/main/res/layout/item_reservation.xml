@@ -78,6 +78,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:drawablePadding="4dp"
+            android:gravity="center"
             android:text="Seller Name"
             android:textColor="#757575"
             android:textSize="11sp"
@@ -91,6 +92,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
             android:drawablePadding="4dp"
+            android:gravity="center"
             android:text="Today, 6:00 PM - 8:00 PM"
             android:textColor="#757575"
             android:textSize="11sp"
@@ -129,6 +131,7 @@
             app:layout_constraintTop_toBottomOf="@id/tvQty" />
 
         <TextView
+            android:id="@+id/tvTimeRemainingLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
@@ -139,6 +142,7 @@
             app:layout_constraintTop_toBottomOf="@id/divider" />
 
         <TextView
+            android:id="@+id/tvTimeRemaining"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"

@@ -14,6 +14,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
@@ -95,10 +97,16 @@ public class MyFoodsAdapter extends RecyclerView.Adapter<MyFoodsAdapter.MyFoodVi
             holder.date.setText("");
         }
 
+        // --- LOAD IMAGE WITH GLIDE ---
         if (item.getImageUri() != null && !item.getImageUri().isEmpty()) {
-            holder.img.setImageURI(Uri.parse(item.getImageUri()));
+            Glide.with(context)
+                    .load(item.getImageUri())
+                    .placeholder(R.drawable.ic_launcher_foreground) // Default while loading
+                    .error(android.R.drawable.stat_notify_error)   // If link fails
+                    .centerCrop() // Makes image look consistent in the card
+                    .into(holder.imgFood);
         } else {
-            holder.img.setImageResource(R.drawable.ic_launcher_background);
+            holder.imgFood.setImageResource(R.drawable.ic_launcher_foreground);
         }
 
         // --- CLICK LISTENER ---
@@ -121,6 +129,9 @@ public class MyFoodsAdapter extends RecyclerView.Adapter<MyFoodsAdapter.MyFoodVi
             intent.putExtra("FOOD_ID", item.getFoodId());
             intent.putExtra("FOOD_OWNER_ID", item.getUserId());
 
+            // Inside MyFoodsAdapter.java -> onBindViewHolder -> setOnClickListener
+            intent.putExtra("FOOD_PICKUP_TIME", item.getPickupTime()); // <--- ADD THIS
+
             context.startActivity(intent);
         });
     }
@@ -132,7 +143,7 @@ public class MyFoodsAdapter extends RecyclerView.Adapter<MyFoodsAdapter.MyFoodVi
 
     public static class MyFoodViewHolder extends RecyclerView.ViewHolder {
         TextView title, price, quantity, status, date;
-        ImageView img;
+        ImageView imgFood;
 
         public MyFoodViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -141,7 +152,7 @@ public class MyFoodsAdapter extends RecyclerView.Adapter<MyFoodsAdapter.MyFoodVi
             quantity = itemView.findViewById(R.id.tvMyFoodQuantity);
             status = itemView.findViewById(R.id.tvStatus);
             date = itemView.findViewById(R.id.tvDate);
-            img = itemView.findViewById(R.id.imgMyFood);
+            imgFood = itemView.findViewById(R.id.imgMyFood);
         }
     }
 }

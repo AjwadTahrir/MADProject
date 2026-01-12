@@ -19,6 +19,7 @@ import java.util.Locale;
 
 public class RedemptionTicketActivity extends AppCompatActivity {
 
+    private TextView tvLocation, tvTicketPickupTime;
     private TextView tvRedeemCode, tvFoodTitle, tvSellerName, tvDate, tvMealsSavedText;
     private SeekBar sliderRedeem;
 
@@ -41,6 +42,8 @@ public class RedemptionTicketActivity extends AppCompatActivity {
         tvMealsSavedText = findViewById(R.id.tvMealsSavedText);// "You're saving 1 meal"
         sliderRedeem = findViewById(R.id.sliderRedeem);
         ImageButton btnClose = findViewById(R.id.btnCloseRedeem);
+        tvLocation = findViewById(R.id.tvTicketLocation);
+        tvTicketPickupTime = findViewById(R.id.tvTicketPickupTime);
 
         // 2. Get Data passed from Adapter
         reservationId = getIntent().getStringExtra("RESERVATION_ID");
@@ -48,6 +51,11 @@ public class RedemptionTicketActivity extends AppCompatActivity {
         sellerId = getIntent().getStringExtra("SELLER_ID");
         quantityReserved = getIntent().getIntExtra("QUANTITY", 1);
         long timestamp = getIntent().getLongExtra("TIMESTAMP", 0);
+        String location = getIntent().getStringExtra("FOOD_LOCATION");
+        String pickupTime = getIntent().getStringExtra("PICKUP_TIME");
+
+        if (location != null) tvLocation.setText(location);
+        if (pickupTime != null) tvTicketPickupTime.setText("Today, " + pickupTime);
 
         // 3. Set UI Data
         if (reservationId != null) tvRedeemCode.setText(reservationId);

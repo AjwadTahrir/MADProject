@@ -110,6 +110,7 @@
                         android:layout_marginBottom="12dp"/>
 
                     <TextView
+                        android:id="@+id/tvResPickupTime"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Pickup: Today, 6:00 PM - 8:00 PM"

@@ -29,7 +29,7 @@ import java.util.Locale;
 
 public class FoodDetailsActivity extends AppCompatActivity {
 
-    private String location, title, price, imageUriString, foodId, ownerId, quantity, currentQuantity;
+    private String location, title, price, imageUriString, foodId, ownerId, quantity, currentQuantity, pickupTime;
     private MapView mapDetailView;
     private Button btnRequest, btnStopSelling;
     private TextView tvSellerName, tvAvailability;
@@ -47,6 +47,7 @@ public class FoodDetailsActivity extends AppCompatActivity {
         TextView tvPrice = findViewById(R.id.tvDetailPrice);
         TextView tvDesc = findViewById(R.id.tvDescription);
         TextView tvLoc = findViewById(R.id.tvDetailLocation);
+        TextView tvPickupTime = findViewById(R.id.tvDetailPickupTime);
         ImageView imgFood = findViewById(R.id.imgDetailFood);
         mapDetailView = findViewById(R.id.mapDetailView);
 
@@ -63,6 +64,7 @@ public class FoodDetailsActivity extends AppCompatActivity {
         String desc = intent.getStringExtra("FOOD_DESC");
         location = intent.getStringExtra("FOOD_LOCATION");
         imageUriString = intent.getStringExtra("FOOD_IMAGE_URI");
+        pickupTime = intent.getStringExtra("FOOD_PICKUP_TIME"); // <--- ADD THIS
 
         // CRITICAL DATA
         foodId = intent.getStringExtra("FOOD_ID");
@@ -80,6 +82,12 @@ public class FoodDetailsActivity extends AppCompatActivity {
         if (title != null) tvTitle.setText(title);
         if (desc != null) tvDesc.setText(desc);
         if (location != null) tvLoc.setText(location);
+
+        if (pickupTime != null && !pickupTime.isEmpty()) {
+            tvPickupTime.setText("Pick-up: " + pickupTime);
+        } else {
+            tvPickupTime.setText("Pick-up: Not specified");
+        }
 
         // Format Price
         if (price != null) {
@@ -100,7 +108,11 @@ public class FoodDetailsActivity extends AppCompatActivity {
 
         // Set Image
         if (imageUriString != null && !imageUriString.isEmpty()) {
-            imgFood.setImageURI(Uri.parse(imageUriString));
+            com.bumptech.glide.Glide.with(this)
+                    .load(imageUriString)
+                    .placeholder(R.drawable.ic_launcher_foreground) // Displays while loading
+                    .error(android.R.drawable.stat_notify_error)   // Displays if link is broken
+                    .into(imgFood);
         } else {
             imgFood.setImageResource(R.drawable.ic_launcher_foreground);
         }
@@ -129,10 +141,12 @@ public class FoodDetailsActivity extends AppCompatActivity {
             resIntent.putExtra("FOOD_TITLE", title);
             resIntent.putExtra("FOOD_PRICE", price);
             resIntent.putExtra("FOOD_IMAGE_URI", imageUriString);
+            resIntent.putExtra("FOOD_LOCATION", location);
 
             // *** CRITICAL FIX: Pass the ID and Quantity to the next page ***
             resIntent.putExtra("FOOD_ID", foodId);
             resIntent.putExtra("FOOD_QUANTITY_CURRENT", currentQuantity);
+            resIntent.putExtra("FOOD_PICKUP_TIME", pickupTime);
 
             startActivity(resIntent);
         });

@@ -32,6 +32,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import java.util.UUID;
+
 public class AddFoodActivity extends AppCompatActivity {
 
     private EditText etTitle, etDescription, etPrice, etQuantity, etPickupTime, etLocation;
@@ -117,6 +121,13 @@ public class AddFoodActivity extends AppCompatActivity {
         btnList.setOnClickListener(v -> saveFoodToFirebase(mode));
     }
 
+    private boolean isValidTimeFormat(String time) {
+        // This Regex checks for: (Hour):(Min)(AM/PM) - (Hour):(Min)(AM/PM)
+        // Matches: "6:00 PM - 8:00 PM" or "10:30 AM - 12:30 PM"
+        String timePattern = "^(1[012]|[1-9]):[0-5][0-9] (AM|PM) - (1[012]|[1-9]):[0-5][0-9] (AM|PM)$";
+        return time.matches(timePattern);
+    }
+
     private void searchLocation(String locationName) {
         if (locationName.isEmpty()) return;
 
@@ -148,20 +159,50 @@ public class AddFoodActivity extends AppCompatActivity {
     }
 
     private void saveFoodToFirebase(String mode) {
-        String title = etTitle.getText().toString();
+        String title = etTitle.getText().toString().trim();
         String desc = etDescription.getText().toString();
         String price = etPrice.getText().toString();
         String qty = etQuantity.getText().toString();
-        String time = etPickupTime.getText().toString();
+        String time = etPickupTime.getText().toString().trim();
         String loc = etLocation.getText().toString();
 
+        // Validation
         if (title.isEmpty() || desc.isEmpty() || qty.isEmpty() || time.isEmpty() || loc.isEmpty()) {
             Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show();
             return;
         }
 
+        if (!isValidTimeFormat(time)) {
+            etPickupTime.setError("Format must be: 6:00 PM - 8:00 PM");
+            return;
+        }
+
+        if (selectedImageUri == null) {
+            Toast.makeText(this, "Please select an image", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // --- START IMAGE UPLOAD PROCESS ---
+        Toast.makeText(this, "Uploading image...", Toast.LENGTH_SHORT).show();
+
+        // Create a unique name for the image in Firebase Storage
+        StorageReference storageRef = FirebaseStorage.getInstance().getReference()
+                .child("food_images/" + UUID.randomUUID().toString() + ".jpg");
+
+        storageRef.putFile(selectedImageUri)
+                .addOnSuccessListener(taskSnapshot -> {
+                    // Get the permanent URL
+                    storageRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                        String downloadUrl = uri.toString();
+                        // Now save everything to Firestore
+                        submitDataToFirestore(mode, title, desc, price, qty, time, loc, downloadUrl);
+                    });
+                })
+                .addOnFailureListener(e -> Toast.makeText(this, "Upload failed: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+    }
+
+    private void submitDataToFirestore(String mode, String title, String desc, String price, String qty, String time, String loc, String imageUrl) {
         String userId = fAuth.getCurrentUser().getUid();
-        String imageString = (selectedImageUri != null) ? selectedImageUri.toString() : "";
         long timestamp = System.currentTimeMillis();
 
         Map<String, Object> food = new HashMap<>();
@@ -173,7 +214,7 @@ public class AddFoodActivity extends AppCompatActivity {
         food.put("pickupTime", time);
         food.put("location", loc);
         food.put("status", "active");
-        food.put("imageUri", imageString);
+        food.put("imageUri", imageUrl); // Now using the internet URL
         food.put("timestamp", timestamp);
 
         fStore.collection("foods").add(food)

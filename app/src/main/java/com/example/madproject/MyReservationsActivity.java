@@ -1,6 +1,7 @@
 package com.example.madproject;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -74,18 +75,30 @@ public class MyReservationsActivity extends AppCompatActivity {
         fStore.collection("reservations")
                 .whereEqualTo("buyerId", userId)
                 .whereEqualTo("status", "pending")
-                .orderBy("timestamp", Query.Direction.ASCENDING) // Oldest first (urgent)
+                .orderBy("timestamp", Query.Direction.DESCENDING)
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
                     public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                        if (error != null) return;
-
-                        listReady.clear();
-                        if (value != null) {
-                            for (DocumentSnapshot doc : value.getDocuments()) {
-                                listReady.add(doc.toObject(ReservationItem.class));
-                            }
+                        if (error != null) {
+                            Log.e("FirestoreError", "Error: " + error.getMessage());
+                            return;
                         }
+
+                        // This clears the list so you don't get duplicates
+                        listReady.clear();
+
+                        if (value != null && !value.isEmpty()) {
+                            for (DocumentSnapshot doc : value.getDocuments()) {
+                                ReservationItem item = doc.toObject(ReservationItem.class);
+                                if (item != null) {
+                                    listReady.add(item);
+                                }
+                            }
+                        } else {
+                            // If value is null or empty, it means the database is empty!
+                            Log.d("Firestore", "No pending reservations found.");
+                        }
+
                         adapterReady.notifyDataSetChanged();
                         updateCounts();
                     }

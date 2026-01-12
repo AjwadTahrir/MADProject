@@ -11,11 +11,14 @@ public class ReservationItem {
     private String status;
     private long timestamp;
 
+    private String pickupTime;
+    private String location;
+
     // 1. Empty Constructor (Required for Firestore)
     public ReservationItem() { }
 
     // 2. Full Constructor
-    public ReservationItem(String reservationId, String foodTitle, String foodImage, String sellerId, String buyerId, int quantityReserved, double totalPrice, String status, long timestamp) {
+    public ReservationItem(String reservationId, String foodTitle, String foodImage, String sellerId, String buyerId, int quantityReserved, double totalPrice, String status, long timestamp, String location) {
         this.reservationId = reservationId;
         this.foodTitle = foodTitle;
         this.foodImage = foodImage;
@@ -25,6 +28,7 @@ public class ReservationItem {
         this.totalPrice = totalPrice;
         this.status = status;
         this.timestamp = timestamp;
+        this.location = location;
     }
 
     // 3. Getters & Setters
@@ -54,4 +58,11 @@ public class ReservationItem {
 
     public long getTimestamp() { return timestamp; }
     public void setTimestamp(long timestamp) { this.timestamp = timestamp; }
+
+    // Add to your constructors and then add this getter:
+    public String getPickupTime() { return pickupTime; }
+    public void setPickupTime(String pickupTime) { this.pickupTime = pickupTime; }
+
+    public String getLocation() { return location; }
+    public void setLocation(String location) { this.location = location; }
 }
