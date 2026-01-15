@@ -15,6 +15,10 @@
         <item name="android:textSize">14sp</item>
     </style>
 
+    <style name="Theme.App.Starting" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="android:windowBackground">@drawable/splash_background</item>
+    </style>
+
     <style name="InputStyle">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">50dp</item>

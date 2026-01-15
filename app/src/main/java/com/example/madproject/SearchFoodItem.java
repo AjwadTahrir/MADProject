@@ -1,20 +1,18 @@
 package com.example.madproject;
 
 public class SearchFoodItem {
-    private String title;
-    private String category;   // e.g., "Meals"
-    private String location;   // e.g., "Downtown (1.2mi)"
-    private String price;
+    private String title, category, location, price, imageUri;
     private double rating;
-    private int imageResId;
 
-    public SearchFoodItem(String title, String category, String location, String price, double rating, int imageResId) {
+    public SearchFoodItem() {} // Needed for Firebase
+
+    public SearchFoodItem(String title, String category, String location, String price, double rating, String imageUri) {
         this.title = title;
         this.category = category;
         this.location = location;
         this.price = price;
         this.rating = rating;
-        this.imageResId = imageResId;
+        this.imageUri = imageUri;
     }
 
     public String getTitle() { return title; }
@@ -22,5 +20,5 @@ public class SearchFoodItem {
     public String getLocation() { return location; }
     public String getPrice() { return price; }
     public double getRating() { return rating; }
-    public int getImageResId() { return imageResId; }
+    public String getImageUrl() { return imageUri; }
 }

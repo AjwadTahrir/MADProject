@@ -8,71 +8,69 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import com.bumptech.glide.Glide;
 import java.util.List;
 
 public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchViewHolder> {
 
     private Context context;
-    private List<SearchFoodItem> searchList;
-    private OnItemClickListener listener; // <--- 1. NEW LISTENER VARIABLE
+    private List<SearchFoodItem> list;
+    private OnItemClickListener listener;
 
-    // 2. UPDATED CONSTRUCTOR
-    public SearchAdapter(Context context, List<SearchFoodItem> searchList, OnItemClickListener listener) {
+    public interface OnItemClickListener {
+        void onItemClick(SearchFoodItem item);
+    }
+
+    public SearchAdapter(Context context, List<SearchFoodItem> list, OnItemClickListener listener) {
         this.context = context;
-        this.searchList = searchList;
+        this.list = list;
         this.listener = listener;
     }
 
     @NonNull
     @Override
     public SearchViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.item_search_food, parent, false);
+        // Inflate using R.layout, not R.id
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_food_card, parent, false);
         return new SearchViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull SearchViewHolder holder, int position) {
-        SearchFoodItem item = searchList.get(position);
+        SearchFoodItem item = list.get(position);
 
-        holder.tvTitle.setText(item.getTitle());
-        holder.tvCategory.setText(item.getCategory());
-        holder.tvLocation.setText(item.getLocation());
-        holder.tvPrice.setText(item.getPrice());
-        holder.tvRating.setText(String.valueOf(item.getRating()));
-        holder.imgFood.setImageResource(item.getImageResId());
+        // Set text data
+        holder.title.setText(item.getTitle());
+        holder.price.setText(item.getPrice());
 
-        if (item.getPrice().equalsIgnoreCase("Free")) {
-            holder.tvPrice.setTextColor(context.getResources().getColor(android.R.color.holo_green_dark));
+        // Improved Glide Loading
+        if (item.getImageUrl() != null && !item.getImageUrl().isEmpty()) {
+            Glide.with(context)
+                    .load(item.getImageUrl())
+                    .centerCrop() // Ensures the image fills the square nicely
+                    .placeholder(R.drawable.ic_launcher_background) // While loading
+                    .error(android.R.drawable.stat_notify_error)   // If link is broken
+                    .into(holder.pic);
         } else {
-            holder.tvPrice.setTextColor(0xFF00897B);
+            // Fallback if the database has no URL
+            holder.pic.setImageResource(R.drawable.ic_launcher_background);
         }
 
-        // 3. CLICK LISTENER (The Magic Part)
-        holder.itemView.setOnClickListener(v -> {
-            listener.onItemClick(item); // Pass the clicked item back to the Activity
-        });
+        holder.itemView.setOnClickListener(v -> listener.onItemClick(item));
     }
 
     @Override
-    public int getItemCount() { return searchList.size(); }
+    public int getItemCount() { return list.size(); }
 
     public static class SearchViewHolder extends RecyclerView.ViewHolder {
-        TextView tvTitle, tvCategory, tvLocation, tvPrice, tvRating;
-        ImageView imgFood;
+        TextView title, price;
+        ImageView pic;
 
         public SearchViewHolder(@NonNull View itemView) {
             super(itemView);
-            tvTitle = itemView.findViewById(R.id.tvTitle);
-            tvCategory = itemView.findViewById(R.id.tvCategory);
-            tvLocation = itemView.findViewById(R.id.tvLocation);
-            tvPrice = itemView.findViewById(R.id.tvPrice);
-            tvRating = itemView.findViewById(R.id.tvRating);
-            imgFood = itemView.findViewById(R.id.imgFood);
+            title = itemView.findViewById(R.id.tvTitle);
+            price = itemView.findViewById(R.id.tvPrice);
+            pic = itemView.findViewById(R.id.imgFood);
         }
-    }
-
-    // 4. THE INTERFACE
-    public interface OnItemClickListener {
-        void onItemClick(SearchFoodItem item);
     }
 }
