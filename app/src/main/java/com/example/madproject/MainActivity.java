@@ -62,6 +62,9 @@ public class MainActivity extends AppCompatActivity {
 
         loadOtherPeoplesFoods();
 
+
+
+
         // --- 3. NAVIGATION ---
         setupBottomNavigation();
     }
@@ -139,6 +142,21 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
+    // ... inside MainActivity class ...
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Make Status Bar Text Light (White)
+        if (getWindow() != null) {
+            // Clearing the flag reverts it to the default (White text)
+            getWindow().getDecorView().setSystemUiVisibility(0);
+            // Optional: Match your Green Header Color (#004D40)
+            getWindow().setStatusBarColor(android.graphics.Color.parseColor("#004D40"));
+        }
+    }
+
+    // ... before setupBottomNavigation() ...
     private void setupBottomNavigation() {
         BottomNavigationView bottomNav = findViewById(R.id.bottomNav);
         bottomNav.setSelectedItemId(R.id.nav_home);

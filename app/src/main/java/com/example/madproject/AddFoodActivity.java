@@ -142,7 +142,7 @@ public class AddFoodActivity extends AppCompatActivity {
                 mapView.getController().animateTo(point);
 
                 // Add Pin
-                if(currentMarker != null) mapView.getOverlays().remove(currentMarker);
+                if (currentMarker != null) mapView.getOverlays().remove(currentMarker);
                 currentMarker = new Marker(mapView);
                 currentMarker.setPosition(point);
                 currentMarker.setTitle(locationName);
@@ -214,7 +214,7 @@ public class AddFoodActivity extends AppCompatActivity {
         food.put("pickupTime", time);
         food.put("location", loc);
         food.put("status", "active");
-        food.put("imageUri", imageUrl); // Now using the internet URL
+        food.put("imageUri", imageUrl);
         food.put("timestamp", timestamp);
 
         fStore.collection("foods").add(food)
@@ -228,12 +228,23 @@ public class AddFoodActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        mapView.onResume();
+        if (mapView != null) {
+            mapView.onResume();
+        }
+
+        // --- ADDED: FIX STATUS BAR VISIBILITY ---
+        // Since background is likely white, make icons BLACK (Dark)
+        if (getWindow() != null) {
+            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+            getWindow().setStatusBarColor(getResources().getColor(android.R.color.white));
+        }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        mapView.onPause();
+        if (mapView != null) {
+            mapView.onPause();
+        }
     }
 }

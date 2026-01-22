@@ -5,8 +5,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -28,7 +26,7 @@ public class FoodsActivity extends AppCompatActivity {
     RecyclerView recyclerView;
     MyFoodsAdapter adapter;
     List<MyFoodItem> foodList;
-    TextView tvActiveCount; // The subtitle text
+    TextView tvActiveCount; // Subtitle text for counting active foods
 
     FirebaseFirestore fStore;
     FirebaseAuth fAuth;
@@ -43,9 +41,7 @@ public class FoodsActivity extends AppCompatActivity {
         fAuth = FirebaseAuth.getInstance();
 
         // 2. Setup Views
-        // NOW THIS WILL WORK because we added the ID in XML
         tvActiveCount = findViewById(R.id.tvActiveCount);
-
         recyclerView = findViewById(R.id.recyclerMyFoods);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -56,51 +52,37 @@ public class FoodsActivity extends AppCompatActivity {
         // 3. Load Data
         loadMyFoods();
 
-        // 4. Setup Add Button
+        // 4. Setup Add Button (Bottom Sheet Dialog)
         ImageButton btnAdd = findViewById(R.id.btnAddFood);
         btnAdd.setOnClickListener(v -> {
             com.google.android.material.bottomsheet.BottomSheetDialog dialog =
                     new com.google.android.material.bottomsheet.BottomSheetDialog(this);
             View sheetView = getLayoutInflater().inflate(R.layout.bottom_sheet_add, null);
             dialog.setContentView(sheetView);
+
             sheetView.findViewById(R.id.btnCloseSheet).setOnClickListener(view -> dialog.dismiss());
+
+            // "Sell Food" option
             sheetView.findViewById(R.id.cardSell).setOnClickListener(view -> {
                 dialog.dismiss();
                 Intent intent = new Intent(FoodsActivity.this, AddFoodActivity.class);
                 intent.putExtra("MODE", "SELL");
                 startActivity(intent);
             });
+
+            // "List Free Food" option
             sheetView.findViewById(R.id.cardFree).setOnClickListener(view -> {
                 dialog.dismiss();
                 Intent intent = new Intent(FoodsActivity.this, AddFoodActivity.class);
                 intent.putExtra("MODE", "FREE");
                 startActivity(intent);
             });
+
             dialog.show();
         });
 
-        // 5. Navigation
-        BottomNavigationView bottomNav = findViewById(R.id.bottomNav);
-        bottomNav.setSelectedItemId(R.id.nav_foods);
-        bottomNav.setOnItemSelectedListener(item -> {
-            int itemId = item.getItemId();
-            if (itemId == R.id.nav_home) {
-                startActivity(new Intent(getApplicationContext(), MainActivity.class));
-                overridePendingTransition(0, 0);
-                return true;
-            } else if (itemId == R.id.nav_search) {
-                startActivity(new Intent(getApplicationContext(), SearchActivity.class));
-                overridePendingTransition(0, 0);
-                return true;
-            } else if (itemId == R.id.nav_foods) {
-                return true;
-            } else if (itemId == R.id.nav_profile) {
-                startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
-                overridePendingTransition(0, 0);
-                return true;
-            }
-            return false;
-        });
+        // 5. Navigation Setup
+        setupBottomNavigation();
     }
 
     private void loadMyFoods() {
@@ -135,10 +117,45 @@ public class FoodsActivity extends AppCompatActivity {
                         adapter.notifyDataSetChanged();
 
                         // Update the text view with the new count
-                        if(tvActiveCount != null) {
+                        if (tvActiveCount != null) {
                             tvActiveCount.setText(activeCounter + " active foods");
                         }
                     }
                 });
+    }
+
+    private void setupBottomNavigation() {
+        BottomNavigationView bottomNav = findViewById(R.id.bottomNav);
+        bottomNav.setSelectedItemId(R.id.nav_foods);
+        bottomNav.setOnItemSelectedListener(item -> {
+            int itemId = item.getItemId();
+            if (itemId == R.id.nav_home) {
+                startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                overridePendingTransition(0, 0);
+                return true;
+            } else if (itemId == R.id.nav_search) {
+                startActivity(new Intent(getApplicationContext(), SearchActivity.class));
+                overridePendingTransition(0, 0);
+                return true;
+            } else if (itemId == R.id.nav_foods) {
+                return true;
+            } else if (itemId == R.id.nav_profile) {
+                startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
+                overridePendingTransition(0, 0);
+                return true;
+            }
+            return false;
+        });
+    }
+
+    // --- ADDED: FIX STATUS BAR VISIBILITY ---
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Since background is white/light, make icons BLACK (Dark) so they are visible
+        if (getWindow() != null) {
+            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+            getWindow().setStatusBarColor(getResources().getColor(android.R.color.white));
+        }
     }
 }
